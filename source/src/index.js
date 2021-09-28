@@ -8,8 +8,8 @@ const loader = new Loader({
 
 const mapOptions = {
   center: {
-    lat: 0,
-    lng: 0
+    lat: 10000,
+    lng: -50
   },
   zoom: 4
 };
@@ -19,5 +19,5 @@ loader.load().then((google) => {
     new google.maps.Map(document.getElementById("map"), mapOptions);
   })
   .catch(e => {
-    // do something
+    console.error("Error occured while loading map");
   });
