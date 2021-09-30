@@ -8,10 +8,10 @@ const loader = new Loader({
 
 const mapOptions = {
   center: {
-    lat: 10000,
-    lng: -50
+    lat: 40.744118,
+    lng: -74.032679
   },
-  zoom: 4
+  zoom: 13
 };
 
 // Promise
