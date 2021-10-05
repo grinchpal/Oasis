@@ -18,11 +18,11 @@ function Map() {
 
     // Promise
     loader.load().then((google) => {
-        console.log("LOADED");
+        console.log("Landing page map successfully loaded.");
         new google.maps.Map(document.getElementById("map"), mapOptions);
     })
         .catch(e => {
-            console.error("Error occured while loading map.");
+            console.error("Error occured while loading landing page map.");
         });
 
     return (
