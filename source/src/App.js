@@ -1,5 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
+import Signup from './SignupComponent/Signup';
+import { Container } from "react-bootstrap"
 
 function App() {
   return (
@@ -7,7 +9,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Edit <code>src/App.js</code> and save to reload. dddd
         </p>
         <a
           className="App-link"
@@ -18,6 +20,9 @@ function App() {
           Learn React
         </a>
       </header>
+      <Container className="d-flex aligh-item-center justify-content-center" style ={{midHeight:"100vh"}}>
+        <Signup/>
+      </Container>
     </div>
   );
 }
