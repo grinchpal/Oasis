@@ -8,10 +8,10 @@ import Navbar from './NavbarComponent/Navbar';
 function App() {
 
   return (
-    <main>
+    <>
       <Navbar />
       <Map />
-    </main>
+    </>
   );
 }
 
