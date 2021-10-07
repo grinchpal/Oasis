@@ -1,23 +1,17 @@
-import { Loader } from '@googlemaps/js-api-loader';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
-const loader = new Loader({
-  apiKey: "AIzaSyB4-FUFjLVyDHZ0gb8am_qa51l31DRv-d8",
-  version: "weekly",
-  libraries: ["places"]
-});
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
 
-const mapOptions = {
-  center: {
-    lat: 10000,
-    lng: -50
-  },
-  zoom: 4
-};
-
-// Promise
-loader.load().then((google) => {
-    new google.maps.Map(document.getElementById("map"), mapOptions);
-  })
-  .catch(e => {
-    console.error("Error occured while loading map");
-  });
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
