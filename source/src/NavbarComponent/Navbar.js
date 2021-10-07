@@ -8,28 +8,24 @@ function setRoute(path) {
     window.location.href = path;
 }
 
-function addRoute(path) {
-    window.location.href = window.location.pathname + path;
-}
-
 function Navbar() {
     return (
         <>
-            <div>
-                <Router>
-                    <ul>
-                        <li>
-                            <a onClick={() => setRoute('/test')}>Test</a>
-                        </li>
-                        <li>
-                            <a onClick={() => addRoute('/test2')}>Test2</a>
-                        </li>
-                    </ul>
-                    <Route path="/test" component={test} />
-                    <Route path="/test2" component={test2} />
-                </Router>
-            </div>
+            <Router>
+                <ul>
+                    <a className="logo" onClick={() => setRoute('/')}>Oasis</a>
+                    <li>
+                        <a onClick={() => setRoute('/test')}>Test</a>
+                    </li>
+                    <li>
+                        <a onClick={() => setRoute('/test2')}>Test2</a>
+                    </li>
+                </ul>
+                <Route exact path="/test" component={test} />
+                <Route exact path="/test2" component={test2} />
+            </Router>
         </>
+
     );
 }
 
