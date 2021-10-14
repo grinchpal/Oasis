@@ -1,19 +1,15 @@
 import './App.css';
 import './index.css';
-import { Container } from "react-bootstrap"
-//components
-import Map from './MapComponent/Map';
-import Signup from './SignupComponent/Signup';
 
-function App() {
+//components
+import Navbar from './NavbarComponent/Navbar';
+
+export default function App() {
   return (
-    <main>
-      <Signup/>
-      <Container className="d-flex aligh-item-center justify-content-center" style ={{midHeight:"100vh"}}>
-        <Signup/>
-      </Container>
-    </main>
+    <>
+      <div className="basePage">
+        <Navbar />
+      </div>
+    </>
   );
 }
-
-export default App;
