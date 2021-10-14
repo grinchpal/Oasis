@@ -9,7 +9,7 @@ function setRoute(path) {
     window.location.href = path;
 }
 
-function Navbar() {
+export default function Navbar() {
     return (
         <>
             <Router>
@@ -30,5 +30,3 @@ function Navbar() {
 
     );
 }
-
-export default Navbar;

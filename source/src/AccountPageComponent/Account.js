@@ -1,9 +1,12 @@
-function Account() {
+import { Container } from "react-bootstrap";
+import Signup from "./SignupComponent/Signup";
+
+export default function Account() {
     return (
         <>
-        <h2>This the Account Page</h2>
+            <Signup />
+            <Container className="d-flex aligh-item-center justify-content-center" style={{ midHeight: "100vh" }}>
+            </Container>
         </>
     );
 }
-
-export default Account;
