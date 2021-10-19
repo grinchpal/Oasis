@@ -2,7 +2,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import './Map.css';
 
 function Map() {
-    const loadMap = true;
+    const loadMap = false;
 
     if (loadMap) {
         const loader = new Loader({
