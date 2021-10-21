@@ -1,0 +1,20 @@
+ul {
+    list-style: none;
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    padding-inline-start: 0px;
+}
+
+.label {
+    font-weight: 700;
+    font-size: inherit;
+    color: black;
+}
+
+.list {
+    overflow-y: scroll;
+}
+
+.checkboxContainer {
+    height: 6em;
+}
