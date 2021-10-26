@@ -2,15 +2,14 @@ import './App.css';
 import './index.css';
 
 //components
-import Map from './MapComponent/Map';
+import Navbar from './NavbarComponent/Navbar';
 
-function App() {
-
+export default function App() {
   return (
-    <main>
-      <Map />
-    </main>
+    <>
+      <div className="basePage">
+        <Navbar />
+      </div>
+    </>
   );
 }
-
-export default App;
