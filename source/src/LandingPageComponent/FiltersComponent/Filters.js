@@ -3,6 +3,7 @@ import './Filters.css';
 const locationTypes = ['Domestic Violence Shelters', 'Homeless Shelters', 'Public Restrooms'];
 const filters = ['Allows Pets', 'Offers Education', 'Offers Meals'];
 const overflow = 3;
+let searchRadius = 10;
 
 function onCheckboxClick(i) {
     let checkbox = document.getElementById(i.toString());
@@ -12,6 +13,17 @@ function onCheckboxClick(i) {
     else {
         console.log(checkbox.value + " has been unchecked");
     }
+}
+
+function setRangeValue() { //for UI purposes
+    var slider = document.getElementById("range");
+    var output = document.getElementById("rangeValue");
+    output.innerHTML = slider.value;
+}
+
+function updateRangeValue() { //for sending search radius info
+    var slider = document.getElementById("range");
+    console.log("User chose search radius of " + slider.value + " miles.");
 }
 
 export default function Filters() {
@@ -40,19 +52,36 @@ export default function Filters() {
 
     return (
         <>
-            <div className={locationClass}>
-                <ul>
-                    {locationTypeHTML}
-                </ul>
+            <div className="container">
+                <div className={locationClass}>
+                    <ul>
+                        {locationTypeHTML}
+                    </ul>
+                </div>
             </div>
 
             <br></br>
 
-            <h4>Filters</h4>
-            <div className={filterClass}>
-                <ul>
-                    {filtersHTML}
-                </ul>
+            <div className="container">
+                <h4>Filters</h4>
+                <div className={filterClass}>
+                    <ul>
+                        {filtersHTML}
+                    </ul>
+                </div>
+            </div>
+
+            <br></br>
+
+            <div className="container">
+                <h4>Search Radius</h4>
+                <div className="slideContainer">
+                    <input type="range" min="1" max="50" className="slider" id="range"
+                        onInput={() => setRangeValue()} onMouseUp={() => updateRangeValue()}></input>
+                </div>
+                <div className="inline">
+                <p id="rangeValue" className="inline">50</p> mi
+                </div>
             </div>
         </>
     );
