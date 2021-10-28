@@ -1,0 +1,79 @@
+ul {
+    list-style: none;
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    padding-inline-start: 0px;
+}
+
+.label {
+    font-weight: 700;
+    font-size: inherit;
+    color: black;
+}
+
+.list {
+    overflow-y: scroll;
+}
+
+.checkboxContainer {
+    height: 6em;
+}
+
+
+body {
+    --thumbNumber: "10";
+}
+
+.slideContainer {
+    padding-top: 0.3em;
+    padding-bottom: 0.5em;
+    width: 100%;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16vw;
+    height: 0.5em;
+    background: gray;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s;
+}
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.5vw;
+    height: 1em;
+    background: green;
+    cursor: pointer;
+    border-radius: 50%;
+}
+.slider::-webkit-slider-thumb::before {
+    content: var(--thumbNumber);
+}
+.slider::-moz-range-thumb {
+    width: 1.5vw;
+    height: 1em;
+    background: green;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+#rangeValue {
+    content: var(--thumbNumber);
+}
+
+.container {
+    padding-top: 1em;
+    width: 100%;
+}
+
+.inline {
+    display: inline;
+}
