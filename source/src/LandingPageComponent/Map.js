@@ -1,5 +1,7 @@
 import { Loader } from '@googlemaps/js-api-loader';
 import './Map.css';
+import React from 'react'
+
 
 function Map() {
     const loadMap = true;

@@ -1,5 +1,6 @@
 import './App.css';
 import './index.css';
+import React from 'react'
 
 //components
 import Navbar from './NavbarComponent/Navbar';
