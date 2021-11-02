@@ -1,4 +1,11 @@
 #map {
     height: 52em;
-    width: inherit;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.open {
+    width: 250px;
 }
