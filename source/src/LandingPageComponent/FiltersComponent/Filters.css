@@ -19,11 +19,6 @@ ul {
     height: 6em;
 }
 
-
-body {
-    --thumbNumber: "10";
-}
-
 .slideContainer {
     padding-top: 0.3em;
     padding-bottom: 0.5em;
@@ -48,25 +43,18 @@ body {
 .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 1.5vw;
-    height: 1em;
+    width: 12px;
+    height: 12px;
     background: green;
     cursor: pointer;
     border-radius: 50%;
-}
-.slider::-webkit-slider-thumb::before {
-    content: var(--thumbNumber);
 }
 .slider::-moz-range-thumb {
-    width: 1.5vw;
-    height: 1em;
+    width: 12px;
+    height: 12px;
     background: green;
     cursor: pointer;
     border-radius: 50%;
-}
-
-#rangeValue {
-    content: var(--thumbNumber);
 }
 
 .container {
