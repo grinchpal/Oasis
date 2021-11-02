@@ -3,7 +3,7 @@ import './Filters.css';
 const locationTypes = ['Domestic Violence Shelters', 'Homeless Shelters', 'Public Restrooms'];
 const filters = ['Allows Pets', 'Offers Education', 'Offers Meals'];
 const overflow = 3;
-let searchRadius = 10;
+let previousRange = "50";
 
 function onCheckboxClick(i) {
     let checkbox = document.getElementById(i.toString());
@@ -13,6 +13,7 @@ function onCheckboxClick(i) {
     else {
         console.log(checkbox.value + " has been unchecked");
     }
+    //TODO: Apply checkbox.value to current list of filters in map
 }
 
 function setRangeValue() { //for UI purposes
@@ -23,7 +24,11 @@ function setRangeValue() { //for UI purposes
 
 function updateRangeValue() { //for sending search radius info
     var slider = document.getElementById("range");
-    console.log("User chose search radius of " + slider.value + " miles.");
+    if (slider.value !== previousRange) { //only update search radius when its changed
+        console.log("User chose search radius of " + slider.value + " miles.");
+        //TODO: Send slider.value to map
+        previousRange = slider.value;
+    }
 }
 
 export default function Filters() {
@@ -33,7 +38,7 @@ export default function Filters() {
             <label htmlFor={index.toString()}>&nbsp;{type}</label>
         </li>
     );
-    console.log(locationTypeHTML);
+    //console.log(locationTypeHTML);
 
     const filtersHTML = filters.map((filter, index) => {
         let key = locationTypes.length - 1 + index;
