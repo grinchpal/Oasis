@@ -1,7 +1,19 @@
 import './Filters.css';
 
-const locationTypes = ['Domestic Violence Shelters', 'Homeless Shelters', 'Public Restrooms'];
-const filters = ['Allows Pets', 'Offers Education', 'Offers Meals'];
+var locationTypes = {
+    'Domestic Violence Shelters': false,
+    'Homeless Shelters': false,
+    'Public Restrooms': false
+};
+var amenities = {
+    'Allows Pets': false,
+    'Offers Education': false,
+    'Offers Meals': false
+};
+var range = {
+    "radius": -1
+}
+//const filters = ['Allows Pets', 'Offers Education', 'Offers Meals'];
 const overflow = 3;
 let previousRange = "50";
 
@@ -14,6 +26,23 @@ function onCheckboxClick(i) {
         console.log(checkbox.value + " has been unchecked");
     }
     //TODO: Apply checkbox.value to current list of filters in map
+    if (i < Object.keys(locationTypes).length) { //id is in locations
+        Object.keys(locationTypes).forEach((type, index) => {
+            if (index === i) {
+                locationTypes[type] = true;
+            }
+            else {
+                locationTypes[type] = false;
+            }
+        });
+    }
+    else { //id is in filters
+        Object.keys(amenities).forEach((amenity, index) => {
+            if (index === i - Object.keys(amenities).length) {
+                amenities[amenity] = !amenities[amenity];
+            }
+        });
+    }
 }
 
 function setRangeValue() { //for UI purposes
@@ -26,34 +55,35 @@ function updateRangeValue() { //for sending search radius info
     var slider = document.getElementById("range");
     if (slider.value !== previousRange) { //only update search radius when its changed
         console.log("User chose search radius of " + slider.value + " miles.");
-        //TODO: Send slider.value to map
         previousRange = slider.value;
+        range["radius"] = slider.value;
     }
 }
 
 export default function Filters() {
-    const locationTypeHTML = locationTypes.map((type, index) =>
+    const locationTypeHTML = Object.keys(locationTypes).map((type, index) =>
         <li key={index}>
-            <input id={index.toString()} type="checkbox" name="location" value={type} onClick={() => onCheckboxClick(index)} />
+            <input id={index.toString()} type="radio" name="location" value={type} onClick={() => onCheckboxClick(index)} />
             <label htmlFor={index.toString()}>&nbsp;{type}</label>
         </li>
     );
     //console.log(locationTypeHTML);
 
-    const filtersHTML = filters.map((filter, index) => {
-        let key = locationTypes.length - 1 + index;
+    let baseKey = Object.keys(locationTypes).length;
+    const amenitiesHTML = Object.keys(amenities).map((amenity, index) => {
+        let key = baseKey + index;
         return (
             <li key={key}>
-                <input id={key.toString()} type="checkbox" name="filter" value={filter} onClick={() => onCheckboxClick(key)} />
-                <label htmlFor={key.toString()}>&nbsp;{filter}</label>
+                <input id={key.toString()} type="checkbox" name="amenity" value={amenity} onClick={() => onCheckboxClick(key)} />
+                <label htmlFor={key.toString()}>&nbsp;{amenity}</label>
             </li>
         );
     });
 
     let locationClass = "checkboxContainer";
-    let filterClass = "checkboxContainer";
+    let amenityClass = "checkboxContainer";
     if (locationTypes.length > overflow) locationClass = " list";
-    if (filters.length > overflow) filterClass = " list"; //There are spaces so css can detect multiple classes
+    if (amenities.length > overflow) amenityClass = " list"; //There are spaces so css can detect multiple classes
 
     return (
         <>
@@ -69,9 +99,9 @@ export default function Filters() {
 
             <div className="container">
                 <h4>Filters</h4>
-                <div className={filterClass}>
+                <div className={amenityClass}>
                     <ul>
-                        {filtersHTML}
+                        {amenitiesHTML}
                     </ul>
                 </div>
             </div>
@@ -85,9 +115,15 @@ export default function Filters() {
                         onInput={() => setRangeValue()} onMouseUp={() => updateRangeValue()}></input>
                 </div>
                 <div className="inline">
-                <p id="rangeValue" className="inline">50</p> mi
+                    <p id="rangeValue" className="inline">50</p> mi
                 </div>
             </div>
         </>
     );
 }
+
+export {
+    locationTypes,
+    amenities,
+    range
+};

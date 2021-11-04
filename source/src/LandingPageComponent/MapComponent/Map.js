@@ -1,5 +1,10 @@
 import { Loader } from '@googlemaps/js-api-loader';
 import './Map.css';
+import { locationTypes, amenities, range } from '../FiltersComponent/Filters';
+
+const defaultLat = 40.744118;
+const defaultLng = -74.032679;
+const defaultZoom = 13;
 
 function Map() {
     const loadMap = true;
@@ -13,10 +18,10 @@ function Map() {
 
         const mapOptions = {
             center: {
-                lat: 40.744118,
-                lng: -74.032679
+                lat: defaultLat,
+                lng: defaultLng
             },
-            zoom: 13,
+            zoom: defaultZoom,
             mapTypeId: "roadmap"
         };
 
@@ -30,14 +35,14 @@ function Map() {
         // Promise
         loader.load().then((google) => {
             console.log("Landing page map successfully loaded.");
-            let map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
             // Create the search box and link it to the UI element.
             const input = document.getElementById("mapInput");
             const searchBox = new google.maps.places.SearchBox(input);
 
             bounds = new google.maps.LatLngBounds();
-            infoWindow = new google.maps.InfoWindow;
+            infoWindow = new google.maps.InfoWindow();
             currentInfoWindow = infoWindow;
             infoPane = document.getElementById('panel');
 
@@ -63,7 +68,7 @@ function Map() {
                 }
 
                 // Add place details with text formatting
-                let name = document.createElement('h1');
+                let name = document.createElement('h3');
                 name.classList.add('place');
                 name.textContent = placeResult.name;
                 infoPane.appendChild(name);
@@ -93,12 +98,12 @@ function Map() {
             }
 
             let showDetails = function (placeResult, marker, status) {
-                if (status == google.maps.places.PlacesServiceStatus.OK) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
                     let placeInfowindow = new google.maps.InfoWindow();
                     let rating = "None";
                     if (placeResult.rating) rating = placeResult.rating;
                     placeInfowindow.setContent('<div><strong>' + placeResult.name +
-                        '</strong><br>' + 'Rating: ' + rating + '</div>');
+                        '</strong><br>\nRating: ' + rating + '</div>');
                     placeInfowindow.open(marker.map, marker);
                     currentInfoWindow.close();
                     currentInfoWindow = placeInfowindow;
@@ -142,7 +147,7 @@ function Map() {
             }
 
             let nearbyCallback = function (results, status) {
-                if (status == google.maps.places.PlacesServiceStatus.OK) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
                     createMarkers(results);
                 }
             }
@@ -158,11 +163,14 @@ function Map() {
                 service.nearbySearch(request, nearbyCallback);
             }
             let handleLocationError = function (browserHasGeolocation, infoWindow) {
-                // Set default location to Sydney, Australia
-                pos = { lat: -33.856, lng: 151.215 };
+                // Set default location to Hoboken, NJ
+                pos = {
+                    lat: defaultLat,
+                    lng: defaultLng
+                };
                 map = new google.maps.Map(document.getElementById('map'), {
                     center: pos,
-                    zoom: 15
+                    zoom: defaultZoom
                 });
 
                 // Display an InfoWindow at the map center
