@@ -1,7 +1,23 @@
-export default function Resources() {
+import App from '../App';
+import React from 'react';
+import './Resources.css';
+import resources from './data';
+import ResourceCard from './ResourceCard';
+
+function Resources() {
     return (
-        <>
-        <h2>This is the Resources Page</h2>
-        </>
-    );
+        <div className="wrapper">
+          {resources.map(resource =>
+            <ResourceCard
+              key={resource.name}
+              name={resource.name}
+              description={resource.description}
+              image={resource.image}
+              facility={resource.facility}
+            />
+          )}
+        </div>
+      );
 }
+
+export default Resources;
