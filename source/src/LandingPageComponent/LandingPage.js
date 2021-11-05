@@ -14,7 +14,6 @@ export default function LandingPage() {
                     <Map />
                 </div>
                 <div className="col-lg-3 col-md-3 col-sm-3">
-                    <h3 className="center">Results</h3>
                     <div id="panel"></div>
                 </div>
             </div>
