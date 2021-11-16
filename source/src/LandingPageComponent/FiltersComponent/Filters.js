@@ -3,18 +3,18 @@ import './Filters.css';
 var locationTypes = {
     'Domestic Violence Shelters': false,
     'Homeless Shelters': false,
-    'Public Restrooms': false
 };
 var amenities = {
     'Allows Pets': false,
-    'Offers Education': false,
-    'Offers Meals': false
+    'Allows Children': false,
+    'Offers Meals': false,
+    'Offers Showers': false
 };
 var range = {
     "radius": -1
 }
-//const filters = ['Allows Pets', 'Offers Education', 'Offers Meals'];
-const overflow = 3;
+
+const overflow = 4; //how many elements must be in a list to show a scroll bar
 let previousRange = "50";
 
 function onCheckboxClick(i) {
@@ -82,8 +82,9 @@ export default function Filters() {
 
     let locationClass = "checkboxContainer";
     let amenityClass = "checkboxContainer";
-    if (locationTypes.length > overflow) locationClass = " list";
-    if (amenities.length > overflow) amenityClass = " list"; //There are spaces so css can detect multiple classes
+    if (Object.keys(locationTypes).length > overflow) locationClass = "checkboxContainer list";
+    if (Object.keys(amenities).length > overflow) amenityClass = "checkboxContainer list";
+    console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
 
     return (
         <>
@@ -98,7 +99,7 @@ export default function Filters() {
             <br></br>
 
             <div className="container">
-                <h4>Filters</h4>
+                <h4>that...</h4>
                 <div className={amenityClass}>
                     <ul>
                         {amenitiesHTML}
