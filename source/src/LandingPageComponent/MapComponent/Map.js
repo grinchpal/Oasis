@@ -4,7 +4,7 @@ import { locationTypes, amenities, range } from '../FiltersComponent/Filters';
 
 const defaultLat = 40.744118;
 const defaultLng = -74.032679;
-const defaultZoom = 13;
+const defaultZoom = 14;
 
 let Google;
 let map;
@@ -14,7 +14,7 @@ let service;
 let bounds;
 let placeMarkers = [];
 
-function reloadMap() {
+function reloadMap(center=false) {
     let pos = {
         lat: defaultLat,
         lng: defaultLng
@@ -22,17 +22,32 @@ function reloadMap() {
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
-            let pos = {
+            let userPos = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
             };
-            getNearbyPlaces(pos); //updated with user's current position
+            if (center) {
+                map.setCenter(userPos);
+            }
+            else {
+                getNearbyPlaces(userPos); //updated with user's current position
+            }
         }, () => {
-            getNearbyPlaces(pos); //default pos, user denied geolocation
+            if (center) {
+                map.setCenter(pos);
+            }
+            else {
+                getNearbyPlaces(pos); //default pos, user denied geolocation
+            }
         });
     }
     else {
-        getNearbyPlaces(pos); //default pos, no browser geolocation
+        if (center) {
+            map.setCenter(pos);
+        }
+        else {
+            getNearbyPlaces(pos); //default pos, no browser geolocation
+        }
     }
 }
 
@@ -47,7 +62,7 @@ function showPanel(placeResult) {
         infoPane.removeChild(infoPane.lastChild);
     }
 
-    /* TODO: Step 4E: Display a Place Photo with the Place Details */
+    
     // Add the primary photo, if there is one
     if (placeResult.photos) {
         let firstPhoto = placeResult.photos[0];
@@ -110,9 +125,7 @@ function createMarkers(places) {
             map: map,
             title: place.name
         });
-        placeMarkers.push(marker);
 
-        /* TODO: Step 4B: Add click listeners to the markers */
         // Add click listener to each marker
         Google.maps.event.addListener(marker, 'click', () => {
             let request = {
@@ -129,6 +142,8 @@ function createMarkers(places) {
             });
         });
 
+        placeMarkers.push(marker);
+
         // Adjust the map bounds to include the location of this marker
         bounds.extend(place.geometry.location);
     });
@@ -137,22 +152,23 @@ function createMarkers(places) {
     map.fitBounds(bounds);
 }
 function deleteMarkers() {
-    for (let i = 0; i < placeMarkers; i++) {
+    for (let i = 0; i < placeMarkers.length; i++) {
         placeMarkers[i].setMap(null); //dereference marker from the map
     }
     placeMarkers = []; //delete markers
 }
 
 function nearbyCallback(results, status) {
-    console.log(results.length);
+    console.log("Pulled " + results.length + " results.");
     deleteMarkers();
-    if (status === Google.maps.places.PlacesServiceStatus.OK) {
+    if (status === Google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
         createMarkers(results);
     }
 }
 
 function getNearbyPlaces(position) {
     console.log(range.radius)
+    //parse location and amenity objects here
     let request = {
         location: position,
         radius: range.radius,
@@ -163,7 +179,7 @@ function getNearbyPlaces(position) {
     service.nearbySearch(request, nearbyCallback);
 }
 
-let handleLocationError = function (browserHasGeolocation, infoWindow) {
+function handleLocationError(browserHasGeolocation, infoWindow) {
     // Set default location to Hoboken, NJ
     let pos = {
         lat: defaultLat,
@@ -225,7 +241,7 @@ function Map() {
                     bounds.extend(pos);
 
                     infoWindow.setPosition(pos);
-                    infoWindow.setContent('Location found.');
+                    infoWindow.setContent('You are here');
                     infoWindow.open(map);
                     map.setCenter(pos);
 
@@ -247,6 +263,8 @@ function Map() {
 
     return (
         <>
+            <button className="button" onClick={() => reloadMap(true)}>Reset Location</button>
+            
             <div id="map"></div>
         </>
     );

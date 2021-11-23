@@ -41,4 +41,10 @@
     max-height: 50%;
     max-width: 50%;
     display: block;
-  }
+}
+
+.button {
+  background-color: lightgray;
+  font-weight: 700;
+  font-size: 1.2em;
+}
