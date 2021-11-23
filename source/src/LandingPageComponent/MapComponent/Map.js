@@ -4,7 +4,7 @@ import { locationTypes, amenities, range } from '../FiltersComponent/Filters';
 
 const defaultLat = 40.744118;
 const defaultLng = -74.032679;
-const defaultZoom = 13;
+const defaultZoom = 14;
 
 let Google;
 let map;
@@ -12,7 +12,44 @@ let infoPane;
 let currentInfoWindow;
 let service;
 let bounds;
-let pos;
+let placeMarkers = [];
+
+function reloadMap(center=false) {
+    let pos = {
+        lat: defaultLat,
+        lng: defaultLng
+    };
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            let userPos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            if (center) {
+                map.setCenter(userPos);
+            }
+            else {
+                getNearbyPlaces(userPos); //updated with user's current position
+            }
+        }, () => {
+            if (center) {
+                map.setCenter(pos);
+            }
+            else {
+                getNearbyPlaces(pos); //default pos, user denied geolocation
+            }
+        });
+    }
+    else {
+        if (center) {
+            map.setCenter(pos);
+        }
+        else {
+            getNearbyPlaces(pos); //default pos, no browser geolocation
+        }
+    }
+}
 
 function showPanel(placeResult) {
     // If infoPane is already open, close it
@@ -25,7 +62,7 @@ function showPanel(placeResult) {
         infoPane.removeChild(infoPane.lastChild);
     }
 
-    /* TODO: Step 4E: Display a Place Photo with the Place Details */
+    
     // Add the primary photo, if there is one
     if (placeResult.photos) {
         let firstPhoto = placeResult.photos[0];
@@ -89,7 +126,6 @@ function createMarkers(places) {
             title: place.name
         });
 
-        /* TODO: Step 4B: Add click listeners to the markers */
         // Add click listener to each marker
         Google.maps.event.addListener(marker, 'click', () => {
             let request = {
@@ -106,6 +142,8 @@ function createMarkers(places) {
             });
         });
 
+        placeMarkers.push(marker);
+
         // Adjust the map bounds to include the location of this marker
         bounds.extend(place.geometry.location);
     });
@@ -113,17 +151,27 @@ function createMarkers(places) {
      * show all the markers within the visible area. */
     map.fitBounds(bounds);
 }
+function deleteMarkers() {
+    for (let i = 0; i < placeMarkers.length; i++) {
+        placeMarkers[i].setMap(null); //dereference marker from the map
+    }
+    placeMarkers = []; //delete markers
+}
 
 function nearbyCallback(results, status) {
-    if (status === Google.maps.places.PlacesServiceStatus.OK) {
+    console.log("Pulled " + results.length + " results.");
+    deleteMarkers();
+    if (status === Google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
         createMarkers(results);
     }
 }
 
 function getNearbyPlaces(position) {
+    console.log(range.radius)
+    //parse location and amenity objects here
     let request = {
         location: position,
-        rankBy: Google.maps.places.RankBy.DISTANCE,
+        radius: range.radius,
         keyword: "women's shelter"
     };
 
@@ -131,9 +179,9 @@ function getNearbyPlaces(position) {
     service.nearbySearch(request, nearbyCallback);
 }
 
-let handleLocationError = function (browserHasGeolocation, infoWindow) {
+function handleLocationError(browserHasGeolocation, infoWindow) {
     // Set default location to Hoboken, NJ
-    pos = {
+    let pos = {
         lat: defaultLat,
         lng: defaultLng
     };
@@ -144,9 +192,12 @@ let handleLocationError = function (browserHasGeolocation, infoWindow) {
 
     // Display an InfoWindow at the map center
     infoWindow.setPosition(pos);
-    infoWindow.setContent(browserHasGeolocation ?
-        'Geolocation permissions denied. Using default location.' :
-        'Error: Your browser doesn\'t support geolocation.');
+    if (browserHasGeolocation) {
+        infoWindow.setContent("Location tracking denied. Using default location.");
+    }
+    else {
+        infoWindow.setContent("Error: Browser doesn't support geolocation.");
+    }
     infoWindow.open(map);
     currentInfoWindow = infoWindow;
 
@@ -164,22 +215,12 @@ function Map() {
             libraries: ["places"]
         });
 
-        const mapOptions = {
-            center: {
-                lat: defaultLat,
-                lng: defaultLng
-            },
-            zoom: defaultZoom,
-            mapTypeId: "roadmap"
-        };
-
         let infoWindow;
 
         // Promise
         loader.load().then((google) => {
             Google = google;
             console.log("Landing page map successfully loaded.");
-            map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
             bounds = new google.maps.LatLngBounds();
             infoWindow = new google.maps.InfoWindow();
@@ -189,18 +230,18 @@ function Map() {
             // Try HTML5 geolocation
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
-                    pos = {
+                    let pos = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
                     map = new google.maps.Map(document.getElementById('map'), {
                         center: pos,
-                        zoom: 15
+                        zoom: defaultZoom
                     });
                     bounds.extend(pos);
 
                     infoWindow.setPosition(pos);
-                    infoWindow.setContent('Location found.');
+                    infoWindow.setContent('You are here');
                     infoWindow.open(map);
                     map.setCenter(pos);
 
@@ -210,22 +251,27 @@ function Map() {
                     // Browser supports geolocation, but user has denied permission
                     handleLocationError(true, infoWindow);
                 });
-            } else {
+            }
+            else {
                 // Browser doesn't support geolocation
                 handleLocationError(false, infoWindow);
             }
-        })
-            .catch(e => {
-                console.error("Error occured while loading landing page map. " + e);
-            });
+        }, (error) => {
+            console.error("Error occured while loading landing page map. " + error);
+        });
     }
 
     return (
         <>
-            {/*<input id="mapInput" type="text" placeholder="Search" />*/}
+            <button className="button" onClick={() => reloadMap(true)}>Reset Location</button>
+            
             <div id="map"></div>
         </>
     );
 }
 
 export default Map;
+
+export {
+    reloadMap
+};

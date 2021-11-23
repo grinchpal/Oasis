@@ -1,4 +1,5 @@
 import './Filters.css';
+import { reloadMap } from '../MapComponent/Map';
 
 var locationTypes = {
     'Domestic Violence Shelters': false,
@@ -11,11 +12,11 @@ var amenities = {
     'Offers Showers': false
 };
 var range = {
-    "radius": -1
+    "radius": 30
 }
 
 const overflow = 4; //how many elements must be in a list to show a scroll bar
-let previousRange = "50";
+let previousRange = "30";
 
 function onCheckboxClick(i) {
     let checkbox = document.getElementById(i.toString());
@@ -25,7 +26,8 @@ function onCheckboxClick(i) {
     else {
         console.log(checkbox.value + " has been unchecked");
     }
-    //TODO: Apply checkbox.value to current list of filters in map
+
+    //Apply checkbox.value to current list of filters in map
     if (i < Object.keys(locationTypes).length) { //id is in locations
         Object.keys(locationTypes).forEach((type, index) => {
             if (index === i) {
@@ -43,6 +45,8 @@ function onCheckboxClick(i) {
             }
         });
     }
+
+    reloadMap();
 }
 
 function setRangeValue() { //for UI purposes
@@ -56,7 +60,8 @@ function updateRangeValue() { //for sending search radius info
     if (slider.value !== previousRange) { //only update search radius when its changed
         console.log("User chose search radius of " + slider.value + " miles.");
         previousRange = slider.value;
-        range["radius"] = slider.value;
+        range["radius"] = parseInt(slider.value) * 1609.344; //google uses meters instead of miles
+        reloadMap();
     }
 }
 
@@ -112,11 +117,11 @@ export default function Filters() {
             <div className="container">
                 <h4>Search Radius</h4>
                 <div className="slideContainer">
-                    <input type="range" min="1" max="50" className="slider" id="range"
+                    <input type="range" min="1" max="30" className="slider" id="range"
                         onInput={() => setRangeValue()} onMouseUp={() => updateRangeValue()}></input>
                 </div>
                 <div className="inline">
-                    <p id="rangeValue" className="inline">50</p> mi
+                    <p id="rangeValue" className="inline">30</p> mi
                 </div>
             </div>
         </>
