@@ -2,8 +2,9 @@ import './Filters.css';
 import { reloadMap } from '../MapComponent/Map';
 
 var locationTypes = {
+    "Women's Shelters": false,
     'Domestic Violence Shelters': false,
-    'Homeless Shelters': false,
+    'Homeless Shelters': false
 };
 var amenities = {
     'Allows Pets': false,
@@ -20,11 +21,13 @@ let previousRange = "30";
 
 function onCheckboxClick(i) {
     let checkbox = document.getElementById(i.toString());
-    if (checkbox.checked) {
-        console.log(checkbox.value + " has been checked");
-    }
-    else {
-        console.log(checkbox.value + " has been unchecked");
+    if (i >= Object.keys(locationTypes).length) {
+        if (checkbox.checked) {
+            console.log(checkbox.value + " has been checked");
+        }
+        else {
+            console.log(checkbox.value + " has been unchecked");
+        }
     }
 
     //Apply checkbox.value to current list of filters in map
@@ -40,8 +43,10 @@ function onCheckboxClick(i) {
     }
     else { //id is in filters
         Object.keys(amenities).forEach((amenity, index) => {
-            if (index === i - Object.keys(amenities).length) {
+            if (index === i - Object.keys(locationTypes).length) {
+                console.log(amenities[amenity]);
                 amenities[amenity] = !amenities[amenity];
+                console.log(amenities[amenity]);
             }
         });
     }
@@ -89,7 +94,7 @@ export default function Filters() {
     let amenityClass = "checkboxContainer";
     if (Object.keys(locationTypes).length > overflow) locationClass = "checkboxContainer list";
     if (Object.keys(amenities).length > overflow) amenityClass = "checkboxContainer list";
-    console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
+    //console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
 
     return (
         <>

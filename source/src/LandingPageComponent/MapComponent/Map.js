@@ -167,12 +167,27 @@ function nearbyCallback(results, status) {
 }
 
 function getNearbyPlaces(position) {
-    console.log(range.radius)
+    //console.log(range.radius)
     //parse location and amenity objects here
+    var searchQuery = "";
+    Object.keys(locationTypes).forEach((location) => {
+        //console.log(locationTypes[location]);
+        if (locationTypes[location] === true) {
+            searchQuery = searchQuery.concat(location + " ");
+            //console.log(searchQuery);
+        }
+    });
+    Object.keys(amenities).forEach((amenity) => {
+        //console.log(amenities[amenity]);
+        if (amenities[amenity] === true) {
+            searchQuery = searchQuery.concat(amenity + " ");
+        }
+    });
+    console.log("Query is: " + searchQuery);
     let request = {
         location: position,
         radius: range.radius,
-        keyword: "women's shelter"
+        keyword: searchQuery
     };
 
     service = new Google.maps.places.PlacesService(map);
@@ -202,7 +217,7 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
     currentInfoWindow = infoWindow;
 
     // Call Places Nearby Search on the default location
-    getNearbyPlaces(pos);
+    //getNearbyPlaces(pos);
 }
 
 function Map() {
@@ -246,7 +261,7 @@ function Map() {
                     map.setCenter(pos);
 
                     // Call Places Nearby Search on user's location
-                    getNearbyPlaces(pos);
+                    //getNearbyPlaces(pos);
                 }, () => {
                     // Browser supports geolocation, but user has denied permission
                     handleLocationError(true, infoWindow);
