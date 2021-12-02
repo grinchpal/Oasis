@@ -13,6 +13,7 @@ let currentInfoWindow;
 let service;
 let bounds;
 let placeMarkers = [];
+let time1, time2;
 
 function reloadMap(center=false) {
     let pos = {
@@ -20,6 +21,7 @@ function reloadMap(center=false) {
         lng: defaultLng
     };
 
+    time1 = new Date();
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
             let userPos = {
@@ -150,6 +152,8 @@ function createMarkers(places) {
     /* Once all the markers have been placed, adjust the bounds of the map to
      * show all the markers within the visible area. */
     map.fitBounds(bounds);
+    time2 = new Date();
+    console.log("Loading map took: " + (time2 - time1)/1000 + " seconds.");
 }
 function deleteMarkers() {
     for (let i = 0; i < placeMarkers.length; i++) {
@@ -168,7 +172,7 @@ function nearbyCallback(results, status) {
 
 function getNearbyPlaces(position) {
     //console.log(range.radius)
-    //parse location and amenity objects here
+    //parse location and amenity objects
     var searchQuery = "";
     Object.keys(locationTypes).forEach((location) => {
         //console.log(locationTypes[location]);
@@ -215,9 +219,6 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
     }
     infoWindow.open(map);
     currentInfoWindow = infoWindow;
-
-    // Call Places Nearby Search on the default location
-    //getNearbyPlaces(pos);
 }
 
 function Map() {
@@ -259,9 +260,6 @@ function Map() {
                     infoWindow.setContent('You are here');
                     infoWindow.open(map);
                     map.setCenter(pos);
-
-                    // Call Places Nearby Search on user's location
-                    //getNearbyPlaces(pos);
                 }, () => {
                     // Browser supports geolocation, but user has denied permission
                     handleLocationError(true, infoWindow);
