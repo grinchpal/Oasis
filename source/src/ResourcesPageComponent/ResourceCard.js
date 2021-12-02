@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 export default function ResourceCard({ description, name, image, facility, website }) {
   return(
+    <a style={{display: "table-cell",  textDecoration: 'none' }} href={website} target="_blank">
     <div className='card'>
         <img src={image}/>
         <div className='card-body'>
@@ -11,7 +12,7 @@ export default function ResourceCard({ description, name, image, facility, websi
             <p>{description}</p>
             <h5>By {facility}</h5>
         </div>
-    </div>
+    </div></a>
   )
 }
 

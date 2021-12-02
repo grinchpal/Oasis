@@ -6,6 +6,7 @@ import ResourceCard from './ResourceCard';
 
 function Resources() {
     return (
+      
         <div className="wrapper">
           {resources.map(resource =>
             <ResourceCard
@@ -14,6 +15,7 @@ function Resources() {
               description={resource.description}
               image={resource.image}
               facility={resource.facility}
+              website= {resource.website}
             />
           )}
         </div>
