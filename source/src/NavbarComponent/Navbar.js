@@ -29,6 +29,8 @@ export default function Navbar() {
                     </li>
                 </ul>
 
+                <hr />
+
                 <Route exact path="/resources" component={Resources} />
                 <Route exact path="/account" component={Account} />
                 <Route exact path="/" component={LandingPage} />

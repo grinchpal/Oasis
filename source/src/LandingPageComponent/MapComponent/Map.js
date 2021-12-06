@@ -260,7 +260,7 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
 }
 
 function Map() {
-    const loadMap = true;
+    const loadMap = false;
 
     if (loadMap) {
         const loader = new Loader({
