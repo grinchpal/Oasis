@@ -40,7 +40,7 @@ export default [
       description: 'Get Help, Free. Confidential. 24/7. Get Help Free. Confidential. 24/7. Get Help',
       image: hotlinelogo,
       facility: 'Nation Women Support',
-      website: 'https://www.ccannj.com/hope_house.php' 
+      website: 'https://www.thehotline.org' 
     },
         // {
     //   name: 'Domestic Violence Support',
