@@ -118,7 +118,7 @@ function showDetails(placeResult, marker, status) {
         currentInfoWindow = placeInfowindow;
         showPanel(placeResult);
     } else {
-        console.log('showDetails failed: ' + status);
+        console.error('showDetails failed: ' + status);
     }
 }
 
@@ -129,7 +129,6 @@ function createMarkers(places) {
             map: map,
             title: place.name
         });
-        //console.log(marker.position);
 
         // Add click listener to each marker
         Google.maps.event.addListener(marker, 'click', () => {
@@ -151,7 +150,7 @@ function createMarkers(places) {
     displayMarkers();
 }
 function deleteMarkers() {
-    console.log("Deleting " + placeMarkers.size + " markers");
+    //console.log("Deleting " + placeMarkers.size + " markers");
     placeMarkers.forEach((marker) => {
         marker.setMap(null); //dereference marker from the map
     });
@@ -163,6 +162,7 @@ function displayMarkers() {
         //Adjust the map bounds to include the location of the marker
         bounds.extend(marker.position);
     });
+    //console.log("Markers: ", placeMarkers);
     //Adjust the map bounds to show all the markers within the visible area
     map.fitBounds(bounds);
     time2 = new Date();
@@ -207,7 +207,7 @@ function getNearbyPlaces(position, halfgen = false) {
             searchQuery = searchQuery.concat(amenity + " ");
         }
     });
-    console.log("Search query: ", searchQuery);
+    //console.log("Search query: ", searchQuery);
     if (halfgen) {
         let newCoords = GetNewCoords(position, range.radius / 2);
         newCoords.forEach((newCenter) => {
