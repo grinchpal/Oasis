@@ -9,6 +9,7 @@
 .liNavbar {
     display: inline;
     float: right;
+    margin-top: 2.3em;
 }
 
 .logo {
@@ -35,4 +36,12 @@ button {
 button:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+hr {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: lightgray;
+    border: none;
+    height: 1px;
 }
