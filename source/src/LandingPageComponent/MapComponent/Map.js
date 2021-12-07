@@ -18,6 +18,7 @@ let time1, time2; //timers used for tracking loading time
 let searchPos;
 
 function reloadMap(center = false) {
+    console.log("------------------------");
     let pos = {
         lat: defaultLat,
         lng: defaultLng
@@ -167,6 +168,7 @@ function displayMarkers() {
     map.fitBounds(bounds);
     time2 = new Date();
     console.log("Loading map took: " + (time2 - time1) / 1000 + " seconds.");
+    console.log("Currently loaded:", placeMarkers.size, "results.");
 }
 
 function nearbyCallback(results, status) {
@@ -207,7 +209,7 @@ function getNearbyPlaces(position, halfgen = false) {
             searchQuery = searchQuery.concat(amenity + " ");
         }
     });
-    //console.log("Search query: ", searchQuery);
+    console.log("Search query: ", searchQuery);
     if (halfgen) {
         let newCoords = GetNewCoords(position, range.radius / 2);
         newCoords.forEach((newCenter) => {
@@ -218,7 +220,6 @@ function getNearbyPlaces(position, halfgen = false) {
             }
             service.nearbySearch(request, HalfGenCallBack);
         })
-        
         return;
     }
     //console.log("Keyword is: " + searchQuery);

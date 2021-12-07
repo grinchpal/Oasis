@@ -23,10 +23,10 @@ function onCheckboxClick(i) {
     let checkbox = document.getElementById(i.toString());
     if (i >= Object.keys(locationTypes).length) {
         if (checkbox.checked) {
-            console.log(checkbox.value + " has been checked");
+            //console.log(checkbox.value + " has been checked");
         }
         else {
-            console.log(checkbox.value + " has been unchecked");
+            //console.log(checkbox.value + " has been unchecked");
         }
     }
 
@@ -63,7 +63,7 @@ function setRangeValue() { //for UI purposes
 function updateRangeValue() { //for sending search radius info
     var slider = document.getElementById("range");
     if (slider.value !== previousRange) { //only update search radius when its changed
-        console.log("User chose search radius of " + slider.value + " miles.");
+        //console.log("User chose search radius of " + slider.value + " miles.");
         previousRange = slider.value;
         range["radius"] = parseInt(slider.value) * 1609.344; //google uses meters instead of miles
         reloadMap();
