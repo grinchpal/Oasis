@@ -1,11 +1,10 @@
 import { locationTypes, amenities, range } from '../FiltersComponent/Filters';
-import { Google, placeMarkers, createMarkers, map } from './Map';
+import { service, Google, placeMarkers, createMarkers, map } from './Map';
 
 let searchPos;
 const useProceduralGen = false;
 
 function GetNearbyPlaces(position, halfgen = false) {
-    let service = new Google.maps.places.PlacesService(map);
     searchPos = position;
 
     //parse location and amenity objects

@@ -22,6 +22,8 @@ function reloadMap(center = false) {
         lng: defaultLng
     };
 
+    service = new Google.maps.places.PlacesService(map);
+
     time1 = new Date();
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
@@ -97,6 +99,7 @@ function showPanel(placeResult) {
         websiteLink.appendChild(websiteUrl);
         websiteLink.title = placeResult.website;
         websiteLink.href = placeResult.website;
+        websiteLink.target = "_blank";
         websitePara.appendChild(websiteLink);
         infoPane.appendChild(websitePara);
     }
