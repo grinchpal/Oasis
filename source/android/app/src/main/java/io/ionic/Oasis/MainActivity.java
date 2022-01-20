@@ -1,4 +1,4 @@
-package io.ionic.nameofyourapp;
+package io.ionic.Oasis;
 
 import com.getcapacitor.BridgeActivity;
 
