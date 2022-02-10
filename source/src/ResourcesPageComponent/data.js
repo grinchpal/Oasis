@@ -33,7 +33,7 @@ export default [
       description: 'Get Help, Free. Confidential. 24/7. Get Help Free. Confidential. 24/7. Get Help',
       image: hobokenlogo,
       facility: 'Hoboken Shelter',
-      website: 'https://www.ccannj.com/hope_house.php'
+      website: 'https://www.hobokenshelter.org'
     },
     {
       name: 'Domestic Violence Support',

@@ -1,0 +1,8 @@
+{
+    "appId": "io.ionic.Oasis",
+    "appName": "Oasis",
+    "bundledWebRuntime": false,
+    "npmClient": "npm",
+    "webDir": "build",
+    "cordova": {}
+}

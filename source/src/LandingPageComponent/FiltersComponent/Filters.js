@@ -44,9 +44,9 @@ function onCheckboxClick(i) {
     else { //id is in filters
         Object.keys(amenities).forEach((amenity, index) => {
             if (index === i - Object.keys(locationTypes).length) {
-                console.log(amenities[amenity]);
+                //console.log(amenities[amenity]);
                 amenities[amenity] = !amenities[amenity];
-                console.log(amenities[amenity]);
+                //console.log(amenities[amenity]);
             }
         });
     }

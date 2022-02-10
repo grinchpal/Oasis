@@ -1,6 +1,6 @@
 import { Loader } from '@googlemaps/js-api-loader';
 import './Map.css';
-import { locationTypes, amenities, range } from '../FiltersComponent/Filters';
+import { GetNearbyPlaces } from './FindPlaces';
 
 const defaultLat = 40.744118;
 const defaultLng = -74.032679;
@@ -15,14 +15,14 @@ let bounds; //the area that the map displays
 let placeMarkers = new Set();
 let time1, time2; //timers used for tracking loading time
 
-let searchPos;
-
 function reloadMap(center = false) {
     console.log("------------------------");
     let pos = {
         lat: defaultLat,
         lng: defaultLng
     };
+
+    service = new Google.maps.places.PlacesService(map);
 
     time1 = new Date();
     if (navigator.geolocation) {
@@ -35,14 +35,14 @@ function reloadMap(center = false) {
                 map.setCenter(userPos);
             }
             else {
-                getNearbyPlaces(userPos); //updated with user's current position
+                GetNearbyPlaces(userPos); //updated with user's current position
             }
         }, () => {
             if (center) {
                 map.setCenter(pos);
             }
             else {
-                getNearbyPlaces(pos); //default pos, user denied geolocation
+                GetNearbyPlaces(pos); //default pos, user denied geolocation
             }
         });
     }
@@ -51,7 +51,7 @@ function reloadMap(center = false) {
             map.setCenter(pos);
         }
         else {
-            getNearbyPlaces(pos); //default pos, no browser geolocation
+            GetNearbyPlaces(pos); //default pos, no browser geolocation
         }
     }
 }
@@ -99,6 +99,7 @@ function showPanel(placeResult) {
         websiteLink.appendChild(websiteUrl);
         websiteLink.title = placeResult.website;
         websiteLink.href = placeResult.website;
+        websiteLink.target = "_blank";
         websitePara.appendChild(websiteLink);
         infoPane.appendChild(websitePara);
     }
@@ -150,13 +151,6 @@ function createMarkers(places) {
     });
     displayMarkers();
 }
-function deleteMarkers() {
-    //console.log("Deleting " + placeMarkers.size + " markers");
-    placeMarkers.forEach((marker) => {
-        marker.setMap(null); //dereference marker from the map
-    });
-    placeMarkers.clear(); //delete markers
-}
 function displayMarkers() {
     bounds = new Google.maps.LatLngBounds();
     placeMarkers.forEach((marker) => {
@@ -169,67 +163,6 @@ function displayMarkers() {
     time2 = new Date();
     console.log("Loading map took: " + (time2 - time1) / 1000 + " seconds.");
     console.log("Currently loaded:", placeMarkers.size, "results.");
-}
-
-function nearbyCallback(results, status) {
-    //console.log("Pulled " + results.length + " results. " + typeof(results.length));
-    deleteMarkers();
-    if (results.length === 20) { //hit max results, switch to half generation
-        getNearbyPlaces(searchPos, true);
-        return;
-    }
-    if (status === Google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
-        createMarkers(results);
-    }
-}
-
-//Handles half generation
-function HalfGenCallBack(results, status) {
-    if (status === Google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
-        createMarkers(results);
-    }
-}
-
-function getNearbyPlaces(position, halfgen = false) {
-    service = new Google.maps.places.PlacesService(map);
-    searchPos = position;
-
-    //parse location and amenity objects
-    var searchQuery = "";
-    Object.keys(locationTypes).forEach((location) => {
-        if (locationTypes[location] === true) {
-            searchQuery = searchQuery.concat(location + " ");
-        }
-    });
-    if (searchQuery === "") { //user did not pick location, use default
-        searchQuery = "Women's Shelters ";
-    }
-    Object.keys(amenities).forEach((amenity) => {
-        if (amenities[amenity] === true) {
-            searchQuery = searchQuery.concat(amenity + " ");
-        }
-    });
-    console.log("Search query: ", searchQuery);
-    if (halfgen) {
-        let newCoords = GetNewCoords(position, range.radius / 2);
-        newCoords.forEach((newCenter) => {
-            let request = {
-                location: newCenter,
-                radius: range.radius / 2,
-                keyword: searchQuery
-            }
-            service.nearbySearch(request, HalfGenCallBack);
-        })
-        return;
-    }
-    //console.log("Keyword is: " + searchQuery);
-    let request = {
-        location: position,
-        radius: range.radius,
-        keyword: searchQuery
-    };
-
-    service.nearbySearch(request, nearbyCallback);
 }
 
 function handleLocationError(browserHasGeolocation, infoWindow) {
@@ -317,35 +250,13 @@ function Map() {
     );
 }
 
-//distance in meters
-function GetNewCoords(pos, radius) {
-    //Returns the center pos of each cardinal direction
-    //about 0.008 degrees per km, radius is in meters
-    const latDisplacement = radius / 1000 * 0.008;
-    const lngDisplacement = latDisplacement / Math.cos(pos.lat * Math.PI / 180);
-    
-    let northPos = {
-        lat: parseFloat((pos.lat + latDisplacement).toFixed(4)),
-        lng: pos.lng
-    }
-    let southPos = {
-        lat: parseFloat((pos.lat - latDisplacement).toFixed(4)),
-        lng: pos.lng
-    }
-    let eastPos = {
-        lat: pos.lat,
-        lng: parseFloat((pos.lng + lngDisplacement).toFixed(4))
-    }
-    let westPos = {
-        lat: pos.lat,
-        lng: parseFloat((pos.lng - lngDisplacement).toFixed(4))
-    }
-    let result = [northPos, southPos, eastPos, westPos];
-    return result;
-}
-
 export default Map;
 
 export {
-    reloadMap
+    reloadMap,
+    createMarkers,
+    service,
+    Google,
+    placeMarkers,
+    map
 };
