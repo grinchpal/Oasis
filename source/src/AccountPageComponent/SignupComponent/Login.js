@@ -37,7 +37,7 @@
 // }
 
 import React from "react"; 
-import { auth, provider } from "firebase-config.js";
+import { auth, provider } from "../../firebase-config.js";
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
