@@ -92,6 +92,7 @@ export default function Filters() {
 
     let locationClass = "checkboxContainer";
     let amenityClass = "checkboxContainer";
+    //test
     if (Object.keys(locationTypes).length > overflow) locationClass = "checkboxContainer list";
     if (Object.keys(amenities).length > overflow) amenityClass = "checkboxContainer list";
     //console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
