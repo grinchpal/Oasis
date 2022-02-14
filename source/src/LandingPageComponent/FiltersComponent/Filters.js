@@ -23,10 +23,10 @@ function onCheckboxClick(i) {
     let checkbox = document.getElementById(i.toString());
     if (i >= Object.keys(locationTypes).length) {
         if (checkbox.checked) {
-            //console.log(checkbox.value + " has been checked");
+            console.log(checkbox.value + " has been checked");
         }
         else {
-            //console.log(checkbox.value + " has been unchecked");
+            console.log(checkbox.value + " has been unchecked");
         }
     }
 

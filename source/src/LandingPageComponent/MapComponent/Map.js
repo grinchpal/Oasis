@@ -144,7 +144,7 @@ function createMarkers(places) {
              * If we fetch the details for all place results as soon as we get
              * the search response, we will hit API rate limits. */
             service.getDetails(request, (placeResult, status) => {
-                showDetails(placeResult, marker, status)
+                showDetails(placeResult, marker, "bad status")
             });
         });
         placeMarkers.add(marker);
@@ -228,12 +228,12 @@ function Map() {
                     infoWindow.open(map);
                     map.setCenter(pos);
                 }, () => {
-                    // Browser supports geolocation, but user has denied permission
+                    console.warn("Browser supports geolocation, but user has denied permission");
                     handleLocationError(true, infoWindow);
                 });
             }
             else {
-                // Browser doesn't support geolocation
+                console.warn("Browser doesn't support geolocation");
                 handleLocationError(false, infoWindow);
             }
         }, (error) => {
