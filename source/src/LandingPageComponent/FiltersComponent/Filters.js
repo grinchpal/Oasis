@@ -1,5 +1,8 @@
 import './Filters.css';
 import { reloadMap } from '../MapComponent/Map';
+import { View, Pressable, Text, Button } from 'react-native';
+const RadioButton = require('../../UIComponents/RadioButton').default;
+const styles = require('./FilterStylesheet').default;
 
 var locationTypes = {
     "Women's Shelters": false,
@@ -21,7 +24,7 @@ let previousRange = "30";
 
 function onCheckboxClick(i) {
     let checkbox = document.getElementById(i.toString());
-    if (i >= Object.keys(locationTypes).length) {
+    if (i >= Object.keys(locationTypes).length && false) {
         if (checkbox.checked) {
             console.log(checkbox.value + " has been checked");
         }
@@ -39,6 +42,7 @@ function onCheckboxClick(i) {
             else {
                 locationTypes[type] = false;
             }
+
         });
     }
     else { //id is in filters
@@ -50,6 +54,7 @@ function onCheckboxClick(i) {
             }
         });
     }
+    console.log(locationTypes, amenities);
 
     reloadMap();
 }
@@ -72,10 +77,20 @@ function updateRangeValue() { //for sending search radius info
 
 export default function Filters() {
     const locationTypeHTML = Object.keys(locationTypes).map((type, index) =>
-        <li key={index}>
+        /*<li key={index}>
             <input id={index.toString()} type="radio" name="location" value={type} onClick={() => onCheckboxClick(index)} />
             <label htmlFor={index.toString()}>&nbsp;{type}</label>
-        </li>
+        </li>*/
+        /*<View key={index}>
+            <Pressable style={styles.button} onPress={() => onCheckboxClick(index)}>
+                <Text>{type}</Text>
+            </Pressable>
+            <Text>{"\n"}</Text>
+        </View>*/
+        <View key={index}>
+            <RadioButton text={type} onPress={onCheckboxClick} input={index} isPressed={locationTypes[type]} ></RadioButton>
+            <Text>{"\n"}</Text>
+        </View>
     );
     //console.log(locationTypeHTML);
 
@@ -83,54 +98,64 @@ export default function Filters() {
     const amenitiesHTML = Object.keys(amenities).map((amenity, index) => {
         let key = baseKey + index;
         return (
-            <li key={key}>
+            <View key={key}>
+                <RadioButton text={amenity} onPress={onCheckboxClick} input={key} isPressed={amenities[amenity]} ></RadioButton>
+                <Text>{"\n"}</Text>
+            </View>
+            /*<View key={key}>
+                <Pressable style={styles.button} onPress={() => onCheckboxClick(key)}>
+                    <Text>{amenity}</Text>
+                </Pressable>
+                <Text>{"\n"}</Text>
+            </View>*/
+            /*<li key={key}>
                 <input id={key.toString()} type="checkbox" name="amenity" value={amenity} onClick={() => onCheckboxClick(key)} />
                 <label htmlFor={key.toString()}>&nbsp;{amenity}</label>
-            </li>
+            </li>*/
         );
     });
 
-    let locationClass = "checkboxContainer";
-    let amenityClass = "checkboxContainer";
+    let locationClass = [styles.checkboxContainer];
+    let amenityClass = [styles.checkboxContainer];
     //test
-    if (Object.keys(locationTypes).length > overflow) locationClass = "checkboxContainer list";
-    if (Object.keys(amenities).length > overflow) amenityClass = "checkboxContainer list";
+    if (Object.keys(locationTypes).length > overflow) locationClass.push(styles.list);
+    if (Object.keys(amenities).length > overflow) amenityClass.push(styles.list)
     //console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
 
     return (
-        <>
-            <div className="container">
-                <div className={locationClass}>
+        <View>
+            <View style={styles.container}>
+                <View style={locationClass}>
                     <ul>
                         {locationTypeHTML}
                     </ul>
-                </div>
-            </div>
+                </View>
+            </View>
 
-            <br></br>
+            <Text>{"\n\n\n"}</Text>
 
-            <div className="container">
-                <h4>that...</h4>
-                <div className={amenityClass}>
+            <View style={styles.container}>
+                <Text style={styles.title}>{"that..."}</Text>
+                <View style={amenityClass}>
                     <ul>
                         {amenitiesHTML}
                     </ul>
-                </div>
-            </div>
+                </View>
+            </View>
 
-            <br></br>
+            <Text>{"\n\n\n\n\n\n"}</Text>
 
-            <div className="container">
-                <h4>Search Radius</h4>
-                <div className="slideContainer">
+            <View style={styles.container}>
+                <Text style={styles.title}>{"Search Radius"}</Text>
+                <View style={styles.slideContainer}>
                     <input type="range" min="1" max="30" className="slider" id="range"
                         onInput={() => setRangeValue()} onMouseUp={() => updateRangeValue()}></input>
-                </div>
+                </View>
                 <div className="inline">
                     <p id="rangeValue" className="inline">30</p> mi
                 </div>
-            </div>
-        </>
+            </View>
+        </View>
     );
 }
 
