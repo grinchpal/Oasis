@@ -1,6 +1,8 @@
 import './Filters.css';
 import { reloadMap } from '../MapComponent/Map';
-import { View, Pressable, Text, Button } from 'react-native';
+import { View, Text } from 'react-native';
+import Slider from '@react-native-community/slider';
+import { useState } from 'react';
 const RadioButton = require('../../UIComponents/RadioButton').default;
 const styles = require('./FilterStylesheet').default;
 
@@ -20,24 +22,15 @@ var range = {
 }
 
 const overflow = 4; //how many elements must be in a list to show a scroll bar
-let previousRange = "30";
+let previousRange = 10;
 
 function onCheckboxClick(i) {
-    let checkbox = document.getElementById(i.toString());
-    if (i >= Object.keys(locationTypes).length && false) {
-        if (checkbox.checked) {
-            console.log(checkbox.value + " has been checked");
-        }
-        else {
-            console.log(checkbox.value + " has been unchecked");
-        }
-    }
-
     //Apply checkbox.value to current list of filters in map
     if (i < Object.keys(locationTypes).length) { //id is in locations
         Object.keys(locationTypes).forEach((type, index) => {
             if (index === i) {
                 locationTypes[type] = true;
+                console.log(`${type} has been clicked`);
             }
             else {
                 locationTypes[type] = false;
@@ -50,6 +43,12 @@ function onCheckboxClick(i) {
             if (index === i - Object.keys(locationTypes).length) {
                 //console.log(amenities[amenity]);
                 amenities[amenity] = !amenities[amenity];
+                if (amenities[amenities] === true) {
+                    console.log(`${amenity} has been checked`);
+                }
+                else {
+                    console.log(`${amenity} has been unchecked`);
+                }
                 //console.log(amenities[amenity]);
             }
         });
@@ -65,12 +64,10 @@ function setRangeValue() { //for UI purposes
     output.innerHTML = slider.value;
 }
 
-function updateRangeValue() { //for sending search radius info
-    var slider = document.getElementById("range");
-    if (slider.value !== previousRange) { //only update search radius when its changed
-        console.log("User chose search radius of " + slider.value + " miles.");
-        previousRange = slider.value;
-        range["radius"] = parseInt(slider.value) * 1609.344; //google uses meters instead of miles
+function updateRangeValue(newValue) { //for sending search radius info
+    if (newValue !== previousRange) { //only update search radius when its changed
+        console.log("User chose search radius of " + newValue + " miles.");
+        range["radius"] = newValue * 1609.344; //google uses meters instead of miles
         reloadMap();
     }
 }
@@ -122,13 +119,13 @@ export default function Filters() {
     if (Object.keys(amenities).length > overflow) amenityClass.push(styles.list)
     //console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
 
+    const [value, setValue] = useState(10);
+    const resetValue = (newValue) => setValue(value - value + Number(newValue));
     return (
         <View>
             <View style={styles.container}>
                 <View style={locationClass}>
-                    <ul>
-                        {locationTypeHTML}
-                    </ul>
+                    {locationTypeHTML}
                 </View>
             </View>
 
@@ -137,9 +134,7 @@ export default function Filters() {
             <View style={styles.container}>
                 <Text style={styles.title}>{"that..."}</Text>
                 <View style={amenityClass}>
-                    <ul>
-                        {amenitiesHTML}
-                    </ul>
+                    {amenitiesHTML}
                 </View>
             </View>
 
@@ -148,12 +143,13 @@ export default function Filters() {
             <View style={styles.container}>
                 <Text style={styles.title}>{"Search Radius"}</Text>
                 <View style={styles.slideContainer}>
-                    <input type="range" min="1" max="30" className="slider" id="range"
-                        onInput={() => setRangeValue()} onMouseUp={() => updateRangeValue()}></input>
+                    <Slider maximumValue={30} minimumValue={1} step={1} value={previousRange}
+                    onSlidingComplete={(sliderValue) => updateRangeValue(sliderValue)}
+                    onValueChange={(sliderValue) => resetValue(sliderValue)} />
                 </View>
-                <div className="inline">
-                    <p id="rangeValue" className="inline">30</p> mi
-                </div>
+                <View style={styles.inline}>
+                    <Text style={styles.inline}>{value} {"mi"}</Text>
+                </View>
             </View>
         </View>
     );

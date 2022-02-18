@@ -8,14 +8,14 @@ const RadioButton = (props) => {
 
     let touchProps = {
         activeOpacity: 1,
-        underlayColor: 'white', // <-- "backgroundColor" will be always overwritten by "underlayColor"
+        underlayColor: 'lightgray', // <-- "backgroundColor" will be always overwritten by "underlayColor"
         borderColor: 'lightblue',
-        style: isPressed ? styles.btnPress : styles.btnNormal, // <-- but you can still apply other style changes
+        style: isPressed ? styles.btnPress : styles.btnNormal,
         //onHideUnderlay: () => setIsPressed(false),
         //onShowUnderlay: () => setIsPressed(true),
         onPress: () => {
             props.onPress(props.input);
-            console.log(props.isPressed);
+            //console.log(props.isPressed);
             //setIsPressed(!isPressed);
         }
     }
