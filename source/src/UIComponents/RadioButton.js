@@ -2,9 +2,9 @@ import { useState } from "react";
 import { View, StyleSheet, TouchableHighlight, Text } from "react-native";
 
 const RadioButton = (props) => {
-    //let [ isPressed, setIsPressed] = useState(false);
+    const [ isPressed, setIsPressed] = useState(false);
 
-    let isPressed = props.isPressed;
+    //let isPressed = props.isPressed;
 
     let touchProps = {
         activeOpacity: 1,
@@ -15,6 +15,7 @@ const RadioButton = (props) => {
         //onShowUnderlay: () => setIsPressed(true),
         onPress: () => {
             props.onPress(props.input);
+            setIsPressed(!isPressed);
             //console.log(props.isPressed);
             //setIsPressed(!isPressed);
         }

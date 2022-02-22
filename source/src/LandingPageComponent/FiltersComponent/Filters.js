@@ -1,6 +1,6 @@
 import './Filters.css';
 import { reloadMap } from '../MapComponent/Map';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableHighlight } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useState } from 'react';
 const RadioButton = require('../../UIComponents/RadioButton').default;
@@ -17,75 +17,74 @@ var amenities = {
     'Offers Meals': false,
     'Offers Showers': false
 };
+let previousRange = 10;
 var range = {
-    "radius": 30
-}
+    "radius": previousRange * 1609.344
+};
 
 const overflow = 4; //how many elements must be in a list to show a scroll bar
-let previousRange = 10;
+
+function updateLocations(i) {
+    Object.keys(locationTypes).forEach((type, index) => {
+        if (index === i) {
+            locationTypes[type] = true;
+            console.log(`${type} has been clicked`);
+        }
+        else {
+            locationTypes[type] = false;
+        }
+    });
+    return locationTypes;
+}
 
 function onCheckboxClick(i) {
     //Apply checkbox.value to current list of filters in map
     if (i < Object.keys(locationTypes).length) { //id is in locations
-        Object.keys(locationTypes).forEach((type, index) => {
-            if (index === i) {
-                locationTypes[type] = true;
-                console.log(`${type} has been clicked`);
-            }
-            else {
-                locationTypes[type] = false;
-            }
-
-        });
+        locationTypes = updateLocations(i);
     }
     else { //id is in filters
         Object.keys(amenities).forEach((amenity, index) => {
             if (index === i - Object.keys(locationTypes).length) {
                 //console.log(amenities[amenity]);
-                amenities[amenity] = !amenities[amenity];
-                if (amenities[amenities] === true) {
-                    console.log(`${amenity} has been checked`);
+                if (amenities[amenity] === true) {
+                    amenities[amenity] = false;
+                    console.log(`${amenity} has been unchecked`);
                 }
                 else {
-                    console.log(`${amenity} has been unchecked`);
+                    amenities[amenity] = true;
+                    console.log(`${amenity} has been checked`);
                 }
                 //console.log(amenities[amenity]);
             }
         });
     }
-    console.log(locationTypes, amenities);
+    //console.log(locationTypes, amenities);
 
     reloadMap();
-}
-
-function setRangeValue() { //for UI purposes
-    var slider = document.getElementById("range");
-    var output = document.getElementById("rangeValue");
-    output.innerHTML = slider.value;
 }
 
 function updateRangeValue(newValue) { //for sending search radius info
     if (newValue !== previousRange) { //only update search radius when its changed
         console.log("User chose search radius of " + newValue + " miles.");
+        previousRange = newValue;
         range["radius"] = newValue * 1609.344; //google uses meters instead of miles
         reloadMap();
     }
 }
 
 export default function Filters() {
+    const [radioButtons, setStates] = useState(locationTypes);
+
     const locationTypeHTML = Object.keys(locationTypes).map((type, index) =>
-        /*<li key={index}>
-            <input id={index.toString()} type="radio" name="location" value={type} onClick={() => onCheckboxClick(index)} />
-            <label htmlFor={index.toString()}>&nbsp;{type}</label>
-        </li>*/
         /*<View key={index}>
-            <Pressable style={styles.button} onPress={() => onCheckboxClick(index)}>
-                <Text>{type}</Text>
-            </Pressable>
+            <TouchableHighlight onPress={() => {onCheckboxClick(index); setStates(updateLocations(index));}} underlayColor={'lightgray'}
+            disabled={locationTypes[type] === true} style={locationTypes[type] === true ? styles.btnPress : styles.btnNormal}>
+                <Text>{radioButtons[type].toString()}</Text>
+            </TouchableHighlight>
             <Text>{"\n"}</Text>
         </View>*/
         <View key={index}>
-            <RadioButton text={type} onPress={onCheckboxClick} input={index} isPressed={locationTypes[type]} ></RadioButton>
+            <RadioButton text={type} onPress={onCheckboxClick} input={index} isPressed={locationTypes[type]}></RadioButton>
             <Text>{"\n"}</Text>
         </View>
     );
@@ -99,16 +98,6 @@ export default function Filters() {
                 <RadioButton text={amenity} onPress={onCheckboxClick} input={key} isPressed={amenities[amenity]} ></RadioButton>
                 <Text>{"\n"}</Text>
             </View>
-            /*<View key={key}>
-                <Pressable style={styles.button} onPress={() => onCheckboxClick(key)}>
-                    <Text>{amenity}</Text>
-                </Pressable>
-                <Text>{"\n"}</Text>
-            </View>*/
-            /*<li key={key}>
-                <input id={key.toString()} type="checkbox" name="amenity" value={amenity} onClick={() => onCheckboxClick(key)} />
-                <label htmlFor={key.toString()}>&nbsp;{amenity}</label>
-            </li>*/
         );
     });
 
@@ -120,7 +109,8 @@ export default function Filters() {
     //console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
 
     const [value, setValue] = useState(10);
-    const resetValue = (newValue) => setValue(value - value + Number(newValue));
+    const resetValue = (newValue) => setValue(Number(newValue));
+
     return (
         <View>
             <View style={styles.container}>

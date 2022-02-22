@@ -28,6 +28,20 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: '1.5em'
+    },
+    btnNormal: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: '0.7em',
+        backgroundColor: 'lightblue',
+        borderColor: 'lightblue'
+    },
+    btnPress: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: '0.7em',
+        backgroundColor: 'lightgray',
+        borderColor: 'lightblue'
     }
 });
 
