@@ -41,7 +41,7 @@ function GetNearbyPlaces(position, halfgen = false) {
         radius: range.radius,
         keyword: searchQuery
     };
-
+    //console.log(request);
     service.nearbySearch(request, nearbyCallback);
 }
 
@@ -53,14 +53,14 @@ function HalfGenCallBack(results, status) {
 }
 
 function nearbyCallback(results, status) {
-    //console.log("Pulled " + results.length + " results. " + typeof(results.length));
+    console.log("Pulled " + results.length + " results. ");
     deleteMarkers();
     if (results.length === 20 && useProceduralGen) { //hit max results, switch to half generation
-        console.log(useProceduralGen);
         GetNearbyPlaces(searchPos, true);
         return;
     }
     if (status === Google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
+        //console.log("creating markers...");
         createMarkers(results);
     }
 }
@@ -79,7 +79,7 @@ function GetNewCoords(pos, radius) {
     //about 0.008 degrees per km, radius is in meters
     const latDisplacement = radius / 1000 * 0.008;
     const lngDisplacement = latDisplacement / Math.cos(pos.lat * Math.PI / 180);
-    
+
     let northPos = {
         lat: parseFloat((pos.lat + latDisplacement).toFixed(4)),
         lng: pos.lng

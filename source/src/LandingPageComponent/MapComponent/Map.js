@@ -228,12 +228,12 @@ function Map() {
                     infoWindow.open(map);
                     map.setCenter(pos);
                 }, () => {
-                    // Browser supports geolocation, but user has denied permission
+                    console.warn("Browser supports geolocation, but user has denied permission");
                     handleLocationError(true, infoWindow);
                 });
             }
             else {
-                // Browser doesn't support geolocation
+                console.warn("Browser doesn't support geolocation");
                 handleLocationError(false, infoWindow);
             }
         }, (error) => {

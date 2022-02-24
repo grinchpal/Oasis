@@ -1,5 +1,10 @@
 import './Filters.css';
 import { reloadMap } from '../MapComponent/Map';
+import { View, Text, TouchableHighlight } from 'react-native';
+import Slider from '@react-native-community/slider';
+import { useState } from 'react';
+const RadioButton = require('../../UIComponents/RadioButton').default;
+const styles = require('./FilterStylesheet').default;
 
 var locationTypes = {
     "Women's Shelters": false,
@@ -12,70 +17,76 @@ var amenities = {
     'Offers Meals': false,
     'Offers Showers': false
 };
+let previousRange = 10;
 var range = {
-    "radius": 30
-}
+    "radius": previousRange * 1609.344
+};
 
 const overflow = 4; //how many elements must be in a list to show a scroll bar
-let previousRange = "30";
 
-function onCheckboxClick(i) {
-    let checkbox = document.getElementById(i.toString());
-    if (i >= Object.keys(locationTypes).length) {
-        if (checkbox.checked) {
-            //console.log(checkbox.value + " has been checked");
+function updateLocations(i) {
+    Object.keys(locationTypes).forEach((type, index) => {
+        if (index === i) {
+            locationTypes[type] = true;
+            console.log(`${type} has been clicked`);
         }
         else {
-            //console.log(checkbox.value + " has been unchecked");
+            locationTypes[type] = false;
         }
-    }
+    });
+    return locationTypes;
+}
 
+function onCheckboxClick(i) {
     //Apply checkbox.value to current list of filters in map
     if (i < Object.keys(locationTypes).length) { //id is in locations
-        Object.keys(locationTypes).forEach((type, index) => {
-            if (index === i) {
-                locationTypes[type] = true;
-            }
-            else {
-                locationTypes[type] = false;
-            }
-        });
+        locationTypes = updateLocations(i);
     }
     else { //id is in filters
         Object.keys(amenities).forEach((amenity, index) => {
             if (index === i - Object.keys(locationTypes).length) {
                 //console.log(amenities[amenity]);
-                amenities[amenity] = !amenities[amenity];
+                if (amenities[amenity] === true) {
+                    amenities[amenity] = false;
+                    console.log(`${amenity} has been unchecked`);
+                }
+                else {
+                    amenities[amenity] = true;
+                    console.log(`${amenity} has been checked`);
+                }
                 //console.log(amenities[amenity]);
             }
         });
     }
+    //console.log(locationTypes, amenities);
 
     reloadMap();
 }
 
-function setRangeValue() { //for UI purposes
-    var slider = document.getElementById("range");
-    var output = document.getElementById("rangeValue");
-    output.innerHTML = slider.value;
-}
-
-function updateRangeValue() { //for sending search radius info
-    var slider = document.getElementById("range");
-    if (slider.value !== previousRange) { //only update search radius when its changed
-        //console.log("User chose search radius of " + slider.value + " miles.");
-        previousRange = slider.value;
-        range["radius"] = parseInt(slider.value) * 1609.344; //google uses meters instead of miles
+function updateRangeValue(newValue) { //for sending search radius info
+    if (newValue !== previousRange) { //only update search radius when its changed
+        console.log("User chose search radius of " + newValue + " miles.");
+        previousRange = newValue;
+        range["radius"] = newValue * 1609.344; //google uses meters instead of miles
         reloadMap();
     }
 }
 
 export default function Filters() {
+    const [radioButtons, setStates] = useState(locationTypes);
+
     const locationTypeHTML = Object.keys(locationTypes).map((type, index) =>
-        <li key={index}>
-            <input id={index.toString()} type="radio" name="location" value={type} onClick={() => onCheckboxClick(index)} />
-            <label htmlFor={index.toString()}>&nbsp;{type}</label>
-        </li>
+        /*<View key={index}>
+            <TouchableHighlight onPress={() => {onCheckboxClick(index); setStates(updateLocations(index));}} underlayColor={'lightgray'}
+            disabled={locationTypes[type] === true} style={locationTypes[type] === true ? styles.btnPress : styles.btnNormal}>
+                <Text>{radioButtons[type].toString()}</Text>
+            </TouchableHighlight>
+            <Text>{"\n"}</Text>
+        </View>*/
+        <View key={index}>
+            <RadioButton text={type} onPress={onCheckboxClick} input={index} isPressed={locationTypes[type]}></RadioButton>
+            <Text>{"\n"}</Text>
+        </View>
     );
     //console.log(locationTypeHTML);
 
@@ -83,53 +94,54 @@ export default function Filters() {
     const amenitiesHTML = Object.keys(amenities).map((amenity, index) => {
         let key = baseKey + index;
         return (
-            <li key={key}>
-                <input id={key.toString()} type="checkbox" name="amenity" value={amenity} onClick={() => onCheckboxClick(key)} />
-                <label htmlFor={key.toString()}>&nbsp;{amenity}</label>
-            </li>
+            <View key={key}>
+                <RadioButton text={amenity} onPress={onCheckboxClick} input={key} isPressed={amenities[amenity]} ></RadioButton>
+                <Text>{"\n"}</Text>
+            </View>
         );
     });
 
-    let locationClass = "checkboxContainer";
-    let amenityClass = "checkboxContainer";
-    if (Object.keys(locationTypes).length > overflow) locationClass = "checkboxContainer list";
-    if (Object.keys(amenities).length > overflow) amenityClass = "checkboxContainer list";
+    let locationClass = [styles.checkboxContainer];
+    let amenityClass = [styles.checkboxContainer];
+    //test
+    if (Object.keys(locationTypes).length > overflow) locationClass.push(styles.list);
+    if (Object.keys(amenities).length > overflow) amenityClass.push(styles.list)
     //console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
 
+    const [value, setValue] = useState(10);
+    const resetValue = (newValue) => setValue(Number(newValue));
+
     return (
-        <>
-            <div className="container">
-                <div className={locationClass}>
-                    <ul>
-                        {locationTypeHTML}
-                    </ul>
-                </div>
-            </div>
+        <View>
+            <View style={styles.container}>
+                <View style={locationClass}>
+                    {locationTypeHTML}
+                </View>
+            </View>
 
-            <br></br>
+            <Text>{"\n\n\n"}</Text>
 
-            <div className="container">
-                <h4>that...</h4>
-                <div className={amenityClass}>
-                    <ul>
-                        {amenitiesHTML}
-                    </ul>
-                </div>
-            </div>
+            <View style={styles.container}>
+                <Text style={styles.title}>{"that..."}</Text>
+                <View style={amenityClass}>
+                    {amenitiesHTML}
+                </View>
+            </View>
 
-            <br></br>
+            <Text>{"\n\n\n\n\n\n"}</Text>
 
-            <div className="container">
-                <h4>Search Radius</h4>
-                <div className="slideContainer">
-                    <input type="range" min="1" max="30" className="slider" id="range"
-                        onInput={() => setRangeValue()} onMouseUp={() => updateRangeValue()}></input>
-                </div>
-                <div className="inline">
-                    <p id="rangeValue" className="inline">30</p> mi
-                </div>
-            </div>
-        </>
+            <View style={styles.container}>
+                <Text style={styles.title}>{"Search Radius"}</Text>
+                <View style={styles.slideContainer}>
+                    <Slider maximumValue={30} minimumValue={1} step={1} value={previousRange}
+                        onSlidingComplete={(sliderValue) => updateRangeValue(sliderValue)}
+                        onValueChange={(sliderValue) => resetValue(sliderValue)} />
+                </View>
+                <View style={styles.inline}>
+                    <Text style={styles.inline}>{value} {"mi"}</Text>
+                </View>
+            </View>
+        </View>
     );
 }
 
