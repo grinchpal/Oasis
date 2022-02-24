@@ -79,7 +79,7 @@ function GetNewCoords(pos, radius) {
     //about 0.008 degrees per km, radius is in meters
     const latDisplacement = radius / 1000 * 0.008;
     const lngDisplacement = latDisplacement / Math.cos(pos.lat * Math.PI / 180);
-    
+
     let northPos = {
         lat: parseFloat((pos.lat + latDisplacement).toFixed(4)),
         lng: pos.lng

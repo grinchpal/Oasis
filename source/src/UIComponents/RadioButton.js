@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, StyleSheet, TouchableHighlight, Text } from "react-native";
 
 const RadioButton = (props) => {
-    const [ isPressed, setIsPressed] = useState(false);
+    const [isPressed, setIsPressed] = useState(false);
 
     //let isPressed = props.isPressed;
 
@@ -23,9 +23,9 @@ const RadioButton = (props) => {
 
     return (
         <View>
-          <TouchableHighlight {...touchProps}>
-            <Text>{props.text}</Text>
-          </TouchableHighlight>
+            <TouchableHighlight {...touchProps}>
+                <Text>{props.text}</Text>
+            </TouchableHighlight>
         </View>
     );
 }

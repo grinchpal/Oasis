@@ -134,8 +134,8 @@ export default function Filters() {
                 <Text style={styles.title}>{"Search Radius"}</Text>
                 <View style={styles.slideContainer}>
                     <Slider maximumValue={30} minimumValue={1} step={1} value={previousRange}
-                    onSlidingComplete={(sliderValue) => updateRangeValue(sliderValue)}
-                    onValueChange={(sliderValue) => resetValue(sliderValue)} />
+                        onSlidingComplete={(sliderValue) => updateRangeValue(sliderValue)}
+                        onValueChange={(sliderValue) => resetValue(sliderValue)} />
                 </View>
                 <View style={styles.inline}>
                     <Text style={styles.inline}>{value} {"mi"}</Text>
