@@ -1,4 +1,5 @@
 import { Loader } from '@googlemaps/js-api-loader';
+import { StyleSheet } from 'react-native';
 import './Map.css';
 import { GetNearbyPlaces } from './FindPlaces';
 
@@ -247,6 +248,23 @@ function Map() {
 
             <div id="map"></div>
         </>
+        /*<View style={styles.mapcontainer}>
+            <MapView
+                provider={PROVIDER_GOOGLE}
+                style={styles.map}
+                initialRegion={{
+                    latitude: defaultLat,
+                    longitude: defaultLng,
+                    latitudeDelta: 0.015,
+                    longitudeDelta: 0.0121,
+                }}
+                showUserLocation={true} >
+                <Marker coordinate={{
+                    latitude: defaultLat,
+                    longitude: defaultLng,
+                }} />
+            </MapView>
+        </View>*/
     );
 }
 
@@ -260,3 +278,15 @@ export {
     placeMarkers,
     map
 };
+
+const styles = StyleSheet.create({
+    mapcontainer: {
+        height: 400,
+        width: 400,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    map: {
+        ...StyleSheet.absoluteFillObject,
+    },
+});

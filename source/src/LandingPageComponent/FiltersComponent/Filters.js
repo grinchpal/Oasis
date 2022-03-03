@@ -76,13 +76,6 @@ export default function Filters() {
     const [radioButtons, setStates] = useState(locationTypes);
 
     const locationTypeHTML = Object.keys(locationTypes).map((type, index) =>
-        /*<View key={index}>
-            <TouchableHighlight onPress={() => {onCheckboxClick(index); setStates(updateLocations(index));}} underlayColor={'lightgray'}
-            disabled={locationTypes[type] === true} style={locationTypes[type] === true ? styles.btnPress : styles.btnNormal}>
-                <Text>{radioButtons[type].toString()}</Text>
-            </TouchableHighlight>
-            <Text>{"\n"}</Text>
-        </View>*/
         <View key={index}>
             <RadioButton text={type} onPress={onCheckboxClick} input={index} isPressed={locationTypes[type]}></RadioButton>
             <Text>{"\n"}</Text>
@@ -103,7 +96,6 @@ export default function Filters() {
 
     let locationClass = [styles.checkboxContainer];
     let amenityClass = [styles.checkboxContainer];
-    //test
     if (Object.keys(locationTypes).length > overflow) locationClass.push(styles.list);
     if (Object.keys(amenities).length > overflow) amenityClass.push(styles.list)
     //console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
