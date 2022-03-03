@@ -248,23 +248,6 @@ function Map() {
 
             <div id="map"></div>
         </>
-        /*<View style={styles.mapcontainer}>
-            <MapView
-                provider={PROVIDER_GOOGLE}
-                style={styles.map}
-                initialRegion={{
-                    latitude: defaultLat,
-                    longitude: defaultLng,
-                    latitudeDelta: 0.015,
-                    longitudeDelta: 0.0121,
-                }}
-                showUserLocation={true} >
-                <Marker coordinate={{
-                    latitude: defaultLat,
-                    longitude: defaultLng,
-                }} />
-            </MapView>
-        </View>*/
     );
 }
 
