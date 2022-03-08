@@ -1,4 +1,5 @@
 import { Loader } from '@googlemaps/js-api-loader';
+import { StyleSheet } from 'react-native';
 import './Map.css';
 import { GetNearbyPlaces } from './FindPlaces';
 
@@ -260,3 +261,15 @@ export {
     placeMarkers,
     map
 };
+
+const styles = StyleSheet.create({
+    mapcontainer: {
+        height: 400,
+        width: 400,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    map: {
+        ...StyleSheet.absoluteFillObject,
+    },
+});
