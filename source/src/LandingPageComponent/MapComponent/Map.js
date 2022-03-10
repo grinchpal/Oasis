@@ -27,6 +27,7 @@ const updateSidebar = (placeResult, marker, status) => {
     sidebarInfo.status = status;
 }
 
+//called every time a filter is changed
 function reloadMap(center = false) {
     console.log("------------------------");
     let pos = {

@@ -94,11 +94,11 @@ export default function Filters() {
 
     let locationClass = [styles.checkboxContainer];
     let amenityClass = [styles.checkboxContainer];
-    if (Object.keys(locationTypes).length > overflow) locationClass.push(styles.list);
-    if (Object.keys(amenities).length > overflow) amenityClass.push(styles.list)
+    if (Object.keys(locationTypes).length > overflow) locationClass.push(styles.list); //create scrollbar
+    if (Object.keys(amenities).length > overflow) amenityClass.push(styles.list); //create scrollbar
     //console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
 
-    const [value, setValue] = useState(10);
+    const [value, setValue] = useState(10); //used for slider bar
     const resetValue = (newValue) => setValue(Number(newValue));
 
     return (

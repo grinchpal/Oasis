@@ -29,7 +29,6 @@ function showPanel(placeResult) {
         infoPane.removeChild(infoPane.lastChild);
     }
 
-
     // Add the primary photo, if there is one
     if (placeResult.photos) {
         let firstPhoto = placeResult.photos[0];
