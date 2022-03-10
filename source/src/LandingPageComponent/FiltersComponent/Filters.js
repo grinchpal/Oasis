@@ -1,6 +1,6 @@
 import './Filters.css';
 import { reloadMap } from '../MapComponent/Map';
-import { View, Text, TouchableHighlight } from 'react-native';
+import { View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useState } from 'react';
 const RadioButton = require('../../UIComponents/RadioButton').default;
@@ -73,8 +73,6 @@ function updateRangeValue(newValue) { //for sending search radius info
 }
 
 export default function Filters() {
-    const [radioButtons, setStates] = useState(locationTypes);
-
     const locationTypeHTML = Object.keys(locationTypes).map((type, index) =>
         <View key={index}>
             <RadioButton text={type} onPress={onCheckboxClick} input={index} isPressed={locationTypes[type]}></RadioButton>

@@ -1,7 +1,7 @@
 import { Loader } from '@googlemaps/js-api-loader';
-import { StyleSheet } from 'react-native';
 import './Map.css';
 import { GetNearbyPlaces } from './FindPlaces';
+import Sidebar, { showDetails } from '../SidebarComponent/Sidebar'
 
 const defaultLat = 40.744118;
 const defaultLng = -74.032679;
@@ -15,6 +15,17 @@ let service;
 let bounds; //the area that the map displays
 let placeMarkers = new Set();
 let time1, time2; //timers used for tracking loading time
+
+let sidebarInfo = {
+    placeResult: undefined,
+    marker: undefined,
+    status: undefined
+};
+const updateSidebar = (placeResult, marker, status) => {
+    sidebarInfo.placeResult = placeResult;
+    sidebarInfo.marker = marker;
+    sidebarInfo.status = status;
+}
 
 function reloadMap(center = false) {
     console.log("------------------------");
@@ -57,74 +68,6 @@ function reloadMap(center = false) {
     }
 }
 
-function showPanel(placeResult) {
-    // If infoPane is already open, close it
-    if (infoPane.classList.contains("open")) {
-        infoPane.classList.remove("open");
-    }
-
-    // Clear the previous details
-    while (infoPane.lastChild) {
-        infoPane.removeChild(infoPane.lastChild);
-    }
-
-
-    // Add the primary photo, if there is one
-    if (placeResult.photos) {
-        let firstPhoto = placeResult.photos[0];
-        let photo = document.createElement('img');
-        photo.classList.add('hero');
-        photo.src = firstPhoto.getUrl();
-        infoPane.appendChild(photo);
-    }
-
-    // Add place details with text formatting
-    let name = document.createElement('h3');
-    name.classList.add('place');
-    name.textContent = placeResult.name;
-    infoPane.appendChild(name);
-    if (placeResult.rating) {
-        let rating = document.createElement('p');
-        rating.classList.add('details');
-        rating.textContent = `Rating: ${placeResult.rating} \u272e`;
-        infoPane.appendChild(rating);
-    }
-    let address = document.createElement('p');
-    address.classList.add('details');
-    address.textContent = placeResult.formatted_address;
-    infoPane.appendChild(address);
-    if (placeResult.website) {
-        let websitePara = document.createElement('p');
-        let websiteLink = document.createElement('a');
-        let websiteUrl = document.createTextNode(placeResult.website);
-        websiteLink.appendChild(websiteUrl);
-        websiteLink.title = placeResult.website;
-        websiteLink.href = placeResult.website;
-        websiteLink.target = "_blank";
-        websitePara.appendChild(websiteLink);
-        infoPane.appendChild(websitePara);
-    }
-
-    // Open the infoPane
-    infoPane.classList.add("open");
-}
-
-function showDetails(placeResult, marker, status) {
-    if (status === Google.maps.places.PlacesServiceStatus.OK) {
-        let placeInfowindow = new Google.maps.InfoWindow();
-        let rating = "None";
-        if (placeResult.rating) rating = placeResult.rating;
-        placeInfowindow.setContent('<div><strong>' + placeResult.name +
-            '</strong><br>\nRating: ' + rating + '</div>');
-        placeInfowindow.open(marker.map, marker);
-        currentInfoWindow.close();
-        currentInfoWindow = placeInfowindow;
-        showPanel(placeResult);
-    } else {
-        console.error('showDetails failed: ' + status);
-    }
-}
-
 function createMarkers(places) {
     places.forEach(place => {
         let marker = new Google.maps.Marker({
@@ -145,7 +88,9 @@ function createMarkers(places) {
              * If we fetch the details for all place results as soon as we get
              * the search response, we will hit API rate limits. */
             service.getDetails(request, (placeResult, status) => {
-                showDetails(placeResult, marker, status)
+                //showDetails(placeResult, marker, status)
+                updateSidebar(placeResult, marker, status);
+                Sidebar(placeResult, marker, status);
             });
         });
         placeMarkers.add(marker);
@@ -259,17 +204,8 @@ export {
     service,
     Google,
     placeMarkers,
-    map
+    map,
+    sidebarInfo,
+    infoPane,
+    currentInfoWindow
 };
-
-const styles = StyleSheet.create({
-    mapcontainer: {
-        height: 400,
-        width: 400,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
-    map: {
-        ...StyleSheet.absoluteFillObject,
-    },
-});

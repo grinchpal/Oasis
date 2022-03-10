@@ -1,6 +1,7 @@
 import './LandingPage.css';
 import Filters from './FiltersComponent/Filters';
 import Map from './MapComponent/Map';
+import Sidebar from './SidebarComponent/Sidebar';
 
 export default function LandingPage() {
     return (
@@ -14,7 +15,7 @@ export default function LandingPage() {
                     <Map />
                 </div>
                 <div className="col-lg-3 col-md-3 col-sm-3">
-                    <div id="panel"></div>
+                    <Sidebar />
                 </div>
             </div>
         </>
