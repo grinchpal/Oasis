@@ -1,7 +1,8 @@
 import { Loader } from '@googlemaps/js-api-loader';
 import './Map.css';
 import { GetNearbyPlaces } from './FindPlaces';
-import Sidebar, { showDetails } from '../SidebarComponent/Sidebar'
+import Sidebar from '../SidebarComponent/Sidebar'
+import { useState } from 'react';
 
 const defaultLat = 40.744118;
 const defaultLng = -74.032679;
@@ -9,22 +10,38 @@ const defaultZoom = 14;
 
 let Google; //google API. Instantiated after loader promise
 let map;    //map API. Instantiated after loader promise
-let infoPane;
 let currentInfoWindow;
 let service;
 let bounds; //the area that the map displays
 let placeMarkers = new Set();
 let time1, time2; //timers used for tracking loading time
+let placeInfo; //used for updating sidebar
 
-let sidebarInfo = {
-    placeResult: undefined,
-    marker: undefined,
-    status: undefined
-};
-const updateSidebar = (placeResult, marker, status) => {
-    sidebarInfo.placeResult = placeResult;
-    sidebarInfo.marker = marker;
-    sidebarInfo.status = status;
+let clickPair = { //controls execution order
+    marker: false, //google api listener
+    map: false //map div onclick
+}
+let infoHTML;
+let stateFn;
+
+//activation fn executes only when all components of stateObj are true
+//stateObj is the object that is being analyzed
+function updateState(activationFn, stateObj, key, arg) {
+    stateObj[key] = true;
+    let allKeysTrue = true;
+    for (let k of Object.keys(stateObj)) {
+        if (stateObj[k] === false) {
+            allKeysTrue = false;
+            break;
+        }
+    }
+    if (allKeysTrue) {
+        infoHTML = activationFn(arg);
+        for (let k of Object.keys(stateObj)) {
+            stateObj[k] = false;
+        }
+        stateFn(infoHTML);
+    }
 }
 
 //called every time a filter is changed
@@ -90,8 +107,22 @@ function createMarkers(places) {
              * the search response, we will hit API rate limits. */
             service.getDetails(request, (placeResult, status) => {
                 //showDetails(placeResult, marker, status)
-                updateSidebar(placeResult, marker, status);
-                Sidebar(placeResult, marker, status);
+                placeInfo = placeResult;
+                //show info bit above marker
+                if (status === Google.maps.places.PlacesServiceStatus.OK) {
+                    updateState(Sidebar, clickPair, 'marker', placeInfo);
+                    let placeInfowindow = new Google.maps.InfoWindow();
+                    let rating = placeResult.rating ? placeResult.rating : "None";
+                    placeInfowindow.setContent('<div><strong>' + placeResult.name +
+                        '</strong><br>\nRating: ' + rating + '</div>');
+                    currentInfoWindow.close();
+                    placeInfowindow.open(marker.map, marker);
+                    currentInfoWindow = placeInfowindow;
+                    console.log("showing info");
+                }
+                else {
+                    console.error('showDetails failed: ' + status);
+                }
             });
         });
         placeMarkers.add(marker);
@@ -137,8 +168,7 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
 
 function Map() {
     const loadMap = true;
-
-    if (loadMap) {
+    if (loadMap && placeMarkers.size === 0) {
         const loader = new Loader({
             apiKey: "AIzaSyB4-FUFjLVyDHZ0gb8am_qa51l31DRv-d8",
             version: "weekly",
@@ -155,7 +185,6 @@ function Map() {
             bounds = new google.maps.LatLngBounds();
             infoWindow = new google.maps.InfoWindow();
             currentInfoWindow = infoWindow;
-            infoPane = document.getElementById('panel');
 
             // Try HTML5 geolocation
             if (navigator.geolocation) {
@@ -188,11 +217,26 @@ function Map() {
         });
     }
 
+    const [infoPane, setValue] = useState(null);
+    const resetPane = (html) => {
+        setValue(html);
+        console.log(html);
+    };
+    stateFn = resetPane;
+
     return (
         <>
-            <button className="button" onClick={() => reloadMap(true)}>Reset Location</button>
-
-            <div id="map"></div>
+            <div className='modal-body-row'>
+                <button className="button" onClick={() => reloadMap(true)}>Reset Location</button>
+            </div>
+            <div className='modal-body-row'>
+                <div className='col-lg-6 col-md-6 col-sm-6' style={{ padding: 'inherit' }}>
+                    <div onClick={() => updateState(Sidebar, clickPair, 'map', placeInfo)} id="map"></div>
+                </div>
+                <div className='col-lg-6 col-md-6 col-sm-6'>
+                    <div>{infoPane}</div>
+                </div>
+            </div>
         </>
     );
 }
@@ -206,7 +250,4 @@ export {
     Google,
     placeMarkers,
     map,
-    sidebarInfo,
-    infoPane,
-    currentInfoWindow
 };
