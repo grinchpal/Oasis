@@ -1,50 +1,38 @@
-import { useState } from "react";
-import { View, StyleSheet, TouchableHighlight, Text } from "react-native";
+import React, { Component } from 'react';
+import { TouchableOpacity, TouchableHighlight, View, Text } from 'react-native';
+const styles = require('./styles').default;
 
-const RadioButton = (props) => {
-    const [isPressed, setIsPressed] = useState(false);
+export default class RadioButton extends Component {
+    state = {
+        value: null,
+    };
 
-    //let isPressed = props.isPressed;
+    render() {
+        const { PROP } = this.props;
+        const { value } = this.state;
 
-    let touchProps = {
-        activeOpacity: 1,
-        underlayColor: 'lightgray', // <-- "backgroundColor" will be always overwritten by "underlayColor"
-        borderColor: 'lightblue',
-        style: isPressed ? styles.btnPress : styles.btnNormal,
-        //onHideUnderlay: () => setIsPressed(false),
-        //onShowUnderlay: () => setIsPressed(true),
-        onPress: () => {
-            props.onPress(props.input);
-            setIsPressed(!isPressed);
-            //console.log(props.isPressed);
-            //setIsPressed(!isPressed);
-        }
+        return (
+            <View>
+
+                {PROP.map(button => {
+                    return (
+                        <View key={button.key} style={{ paddingVertical: '0.7em' }}>
+                            <TouchableHighlight onPress={() => {
+                                this.setState({
+                                    value: button.key,
+                                });
+                                button.onPress(button.id);
+                            }}
+                                style={value === button.key ? [styles.radioPress, styles.btnRoot] : [styles.btnRoot, styles.btnNormal, styles.radioNormal]}
+                                underlayColor={'lightgray'}
+                            >
+                                <Text>{button.text}</Text>
+                            </TouchableHighlight>
+                        </View>
+                    );
+                })
+                }
+            </View >
+        );
     }
-
-    return (
-        <View>
-            <TouchableHighlight {...touchProps}>
-                <Text>{props.text}</Text>
-            </TouchableHighlight>
-        </View>
-    );
 }
-
-var styles = StyleSheet.create({
-    btnNormal: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: '0.7em',
-        backgroundColor: 'lightblue',
-        borderColor: 'lightblue'
-    },
-    btnPress: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: '0.7em',
-        backgroundColor: 'lightgray',
-        borderColor: 'lightblue'
-    }
-});
-
-export default RadioButton;

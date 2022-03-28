@@ -1,7 +1,6 @@
 import './LandingPage.css';
 import Filters from './FiltersComponent/Filters';
 import Map from './MapComponent/Map';
-import Sidebar from './SidebarComponent/Sidebar';
 
 export default function LandingPage() {
     return (
