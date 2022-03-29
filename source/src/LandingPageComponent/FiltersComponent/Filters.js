@@ -1,9 +1,10 @@
 import './Filters.css';
 import { reloadMap } from '../MapComponent/Map';
-import { View, Text, TouchableHighlight } from 'react-native';
+import { View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useState } from 'react';
-const RadioButton = require('../../UIComponents/RadioButton').default;
+import RadioButton from '../../UIComponents/RadioButton';
+const CheckboxButton = require('../../UIComponents/CheckboxButton').default;
 const styles = require('./FilterStylesheet').default;
 
 var locationTypes = {
@@ -21,6 +22,26 @@ let previousRange = 10;
 var range = {
     "radius": previousRange * 1609.344
 };
+const radioButtonData = [
+    {
+        key: "Women's Shelters",
+        text: "Women's Shelters",
+        id: 0,
+        onPress: onCheckboxClick
+    },
+    {
+        key: 'Domestic Violence Shelters',
+        text: 'Domestic Violence Shelters',
+        id: 1,
+        onPress: onCheckboxClick
+    },
+    {
+        key: 'Homeless Shelters',
+        text: 'Homeless Shelters',
+        id: 2,
+        onPress: onCheckboxClick
+    }
+]
 
 const overflow = 4; //how many elements must be in a list to show a scroll bar
 
@@ -73,14 +94,17 @@ function updateRangeValue(newValue) { //for sending search radius info
 }
 
 export default function Filters() {
-    const [radioButtons, setStates] = useState(locationTypes);
-
-    const locationTypeHTML = Object.keys(locationTypes).map((type, index) =>
+    /*const locationTypeHTML = Object.keys(locationTypes).map((type, index) =>
         <View key={index}>
-            <RadioButton text={type} onPress={onCheckboxClick} input={index} isPressed={locationTypes[type]}></RadioButton>
+            <RadioButton PROP={radioButtonData} />
             <Text>{"\n"}</Text>
         </View>
-    );
+    );*/
+    const locationTypeHTML = (
+        <View>
+            <RadioButton PROP={radioButtonData} />
+        </View>
+    )
     //console.log(locationTypeHTML);
 
     let baseKey = Object.keys(locationTypes).length;
@@ -88,7 +112,7 @@ export default function Filters() {
         let key = baseKey + index;
         return (
             <View key={key}>
-                <RadioButton text={amenity} onPress={onCheckboxClick} input={key} isPressed={amenities[amenity]} ></RadioButton>
+                <CheckboxButton text={amenity} onPress={onCheckboxClick} input={key} isPressed={amenities[amenity]} ></CheckboxButton>
                 <Text>{"\n"}</Text>
             </View>
         );
@@ -96,11 +120,11 @@ export default function Filters() {
 
     let locationClass = [styles.checkboxContainer];
     let amenityClass = [styles.checkboxContainer];
-    if (Object.keys(locationTypes).length > overflow) locationClass.push(styles.list);
-    if (Object.keys(amenities).length > overflow) amenityClass.push(styles.list)
+    if (Object.keys(locationTypes).length > overflow) locationClass.push(styles.list); //create scrollbar
+    if (Object.keys(amenities).length > overflow) amenityClass.push(styles.list); //create scrollbar
     //console.log(locationClass, Object.keys(locationTypes).length, amenityClass, Object.keys(amenities).length);
 
-    const [value, setValue] = useState(10);
+    const [value, setValue] = useState(10); //used for slider bar
     const resetValue = (newValue) => setValue(Number(newValue));
 
     return (

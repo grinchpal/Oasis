@@ -1,7 +1,8 @@
 import { Loader } from '@googlemaps/js-api-loader';
-import { StyleSheet } from 'react-native';
 import './Map.css';
 import { GetNearbyPlaces } from './FindPlaces';
+import Sidebar from '../SidebarComponent/Sidebar'
+import { useState } from 'react';
 
 const defaultLat = 40.744118;
 const defaultLng = -74.032679;
@@ -9,13 +10,41 @@ const defaultZoom = 14;
 
 let Google; //google API. Instantiated after loader promise
 let map;    //map API. Instantiated after loader promise
-let infoPane;
 let currentInfoWindow;
 let service;
 let bounds; //the area that the map displays
 let placeMarkers = new Set();
 let time1, time2; //timers used for tracking loading time
+let placeInfo; //used for updating sidebar
 
+let clickPair = { //controls execution order
+    marker: false, //google api listener
+    map: false //map div onclick
+}
+let infoHTML;
+let stateFn;
+
+//activation fn executes only when all components of stateObj are true
+//stateObj is the object that is being analyzed
+function updateState(activationFn, stateObj, key, arg) {
+    stateObj[key] = true;
+    let allKeysTrue = true;
+    for (let k of Object.keys(stateObj)) {
+        if (stateObj[k] === false) {
+            allKeysTrue = false;
+            break;
+        }
+    }
+    if (allKeysTrue) {
+        infoHTML = activationFn(arg);
+        for (let k of Object.keys(stateObj)) {
+            stateObj[k] = false;
+        }
+        stateFn(infoHTML);
+    }
+}
+
+//called every time a filter is changed
 function reloadMap(center = false) {
     console.log("------------------------");
     let pos = {
@@ -57,74 +86,6 @@ function reloadMap(center = false) {
     }
 }
 
-function showPanel(placeResult) {
-    // If infoPane is already open, close it
-    if (infoPane.classList.contains("open")) {
-        infoPane.classList.remove("open");
-    }
-
-    // Clear the previous details
-    while (infoPane.lastChild) {
-        infoPane.removeChild(infoPane.lastChild);
-    }
-
-
-    // Add the primary photo, if there is one
-    if (placeResult.photos) {
-        let firstPhoto = placeResult.photos[0];
-        let photo = document.createElement('img');
-        photo.classList.add('hero');
-        photo.src = firstPhoto.getUrl();
-        infoPane.appendChild(photo);
-    }
-
-    // Add place details with text formatting
-    let name = document.createElement('h3');
-    name.classList.add('place');
-    name.textContent = placeResult.name;
-    infoPane.appendChild(name);
-    if (placeResult.rating) {
-        let rating = document.createElement('p');
-        rating.classList.add('details');
-        rating.textContent = `Rating: ${placeResult.rating} \u272e`;
-        infoPane.appendChild(rating);
-    }
-    let address = document.createElement('p');
-    address.classList.add('details');
-    address.textContent = placeResult.formatted_address;
-    infoPane.appendChild(address);
-    if (placeResult.website) {
-        let websitePara = document.createElement('p');
-        let websiteLink = document.createElement('a');
-        let websiteUrl = document.createTextNode(placeResult.website);
-        websiteLink.appendChild(websiteUrl);
-        websiteLink.title = placeResult.website;
-        websiteLink.href = placeResult.website;
-        websiteLink.target = "_blank";
-        websitePara.appendChild(websiteLink);
-        infoPane.appendChild(websitePara);
-    }
-
-    // Open the infoPane
-    infoPane.classList.add("open");
-}
-
-function showDetails(placeResult, marker, status) {
-    if (status === Google.maps.places.PlacesServiceStatus.OK) {
-        let placeInfowindow = new Google.maps.InfoWindow();
-        let rating = "None";
-        if (placeResult.rating) rating = placeResult.rating;
-        placeInfowindow.setContent('<div><strong>' + placeResult.name +
-            '</strong><br>\nRating: ' + rating + '</div>');
-        placeInfowindow.open(marker.map, marker);
-        currentInfoWindow.close();
-        currentInfoWindow = placeInfowindow;
-        showPanel(placeResult);
-    } else {
-        console.error('showDetails failed: ' + status);
-    }
-}
-
 function createMarkers(places) {
     places.forEach(place => {
         let marker = new Google.maps.Marker({
@@ -145,7 +106,23 @@ function createMarkers(places) {
              * If we fetch the details for all place results as soon as we get
              * the search response, we will hit API rate limits. */
             service.getDetails(request, (placeResult, status) => {
-                showDetails(placeResult, marker, status)
+                //showDetails(placeResult, marker, status)
+                placeInfo = placeResult;
+                //show info bit above marker
+                if (status === Google.maps.places.PlacesServiceStatus.OK) {
+                    updateState(Sidebar, clickPair, 'marker', placeInfo);
+                    let placeInfowindow = new Google.maps.InfoWindow();
+                    let rating = placeResult.rating ? placeResult.rating : "None";
+                    placeInfowindow.setContent('<div><strong>' + placeResult.name +
+                        '</strong><br>\nRating: ' + rating + '</div>');
+                    currentInfoWindow.close();
+                    placeInfowindow.open(marker.map, marker);
+                    currentInfoWindow = placeInfowindow;
+                    console.log("showing info");
+                }
+                else {
+                    console.error('showDetails failed: ' + status);
+                }
             });
         });
         placeMarkers.add(marker);
@@ -191,8 +168,7 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
 
 function Map() {
     const loadMap = true;
-
-    if (loadMap) {
+    if (loadMap && placeMarkers.size === 0) {
         const loader = new Loader({
             apiKey: "AIzaSyB4-FUFjLVyDHZ0gb8am_qa51l31DRv-d8",
             version: "weekly",
@@ -209,7 +185,6 @@ function Map() {
             bounds = new google.maps.LatLngBounds();
             infoWindow = new google.maps.InfoWindow();
             currentInfoWindow = infoWindow;
-            infoPane = document.getElementById('panel');
 
             // Try HTML5 geolocation
             if (navigator.geolocation) {
@@ -242,11 +217,26 @@ function Map() {
         });
     }
 
+    const [infoPane, setValue] = useState(null);
+    const resetPane = (html) => {
+        setValue(html);
+        console.log(html);
+    };
+    stateFn = resetPane;
+
     return (
         <>
-            <button className="button" onClick={() => reloadMap(true)}>Reset Location</button>
-
-            <div id="map"></div>
+            <div className='modal-body-row'>
+                <button className="button" onClick={() => reloadMap(true)}>Reset Location</button>
+            </div>
+            <div className='modal-body-row'>
+                <div className='col-lg-6 col-md-6 col-sm-6' style={{ padding: 'inherit' }}>
+                    <div onClick={() => updateState(Sidebar, clickPair, 'map', placeInfo)} id="map"></div>
+                </div>
+                <div className='col-lg-6 col-md-6 col-sm-6'>
+                    <div>{infoPane}</div>
+                </div>
+            </div>
         </>
     );
 }
@@ -259,17 +249,5 @@ export {
     service,
     Google,
     placeMarkers,
-    map
+    map,
 };
-
-const styles = StyleSheet.create({
-    mapcontainer: {
-        height: 400,
-        width: 400,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
-    map: {
-        ...StyleSheet.absoluteFillObject,
-    },
-});

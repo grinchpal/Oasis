@@ -23,6 +23,7 @@ function GetNearbyPlaces(position, halfgen = false) {
         }
     });
     console.log("Search query: ", searchQuery);
+
     if (halfgen) {
         let newCoords = GetNewCoords(position, range.radius / 2);
         newCoords.forEach((newCenter) => {
