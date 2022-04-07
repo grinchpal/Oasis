@@ -2,7 +2,6 @@
   "name": "source",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:57454",
   "dependencies": {
     "@capacitor/android": "3.4.3",
     "@capacitor/core": "^3.4.0",
