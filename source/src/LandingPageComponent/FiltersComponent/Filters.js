@@ -4,6 +4,7 @@ import { View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useState } from 'react';
 import RadioButton from '../../UIComponents/RadioButton';
+import axios from "axios";
 const CheckboxButton = require('../../UIComponents/CheckboxButton').default;
 const styles = require('./FilterStylesheet').default;
 
@@ -74,6 +75,12 @@ function onCheckboxClick(i) {
                 else {
                     amenities[amenity] = true;
                     console.log(`${amenity} has been checked`);
+                    const newNote = {
+                        title: "wee",
+                        content: "checked"
+                    }
+                    axios.post('http://localhost:57454/', newNote);
+                    
                 }
                 //console.log(amenities[amenity]);
             }
@@ -82,6 +89,7 @@ function onCheckboxClick(i) {
     //console.log(locationTypes, amenities);
 
     reloadMap();
+    
 }
 
 function updateRangeValue(newValue) { //for sending search radius info
