@@ -233,6 +233,7 @@ function Map() {
                 <div className='col-lg-6 col-md-6 col-sm-6' style={{ padding: 'inherit' }}>
                     <div onClick={() => updateState(Sidebar, clickPair, 'map', placeInfo)} id="map"></div>
                 </div>
+                <br></br>
                 <div className='col-lg-6 col-md-6 col-sm-6'>
                     <div>{infoPane}</div>
                 </div>

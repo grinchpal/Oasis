@@ -32,11 +32,12 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
 .basePage {
-  margin: 50px;
+  margin: 2.5vw;
 }
