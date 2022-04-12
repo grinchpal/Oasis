@@ -33,6 +33,7 @@ button {
     background-color: white;
     font-size: 14px;
 }
+
 button:hover {
     text-decoration: underline;
     cursor: pointer;
@@ -42,6 +43,7 @@ hr {
     margin-left: auto;
     margin-right: auto;
     background-color: lightgray;
+    width: inherit;
     border: none;
     height: 1px;
 }
